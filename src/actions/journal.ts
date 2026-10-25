@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getAuthorizedOwner } from "@/lib/supabase/server";
+import { getAuthorizedOwner, createAdminClient } from "@/lib/supabase/server";
 import {
   createEntry,
   updateEntry,
@@ -113,7 +113,34 @@ export async function saveEntryAction(prevState: any, formData: FormData) {
 
   try {
     let savedId = id;
+    const admin = createAdminClient();
+
     if (id) {
+      // 1. If updating an existing entry, sync any image blocks first
+      if (admin) {
+        const imageBlocks = validData.content.blocks.filter(
+          (b): b is Extract<typeof b, { type: "image" }> => b.type === "image"
+        );
+        for (let i = 0; i < imageBlocks.length; i++) {
+          const imgBlock = imageBlocks[i];
+          if (imgBlock.imageId) {
+            try {
+              await admin.from("journal_images").upsert({
+                id: imgBlock.imageId,
+                entry_id: id,
+                storage_path: imgBlock.storagePath || imgBlock.publicPath || `images/${imgBlock.imageId}.jpg`,
+                public_path: imgBlock.publicPath || null,
+                alt_text: imgBlock.altText || "",
+                caption: imgBlock.caption || "",
+                position: i,
+              });
+            } catch (imgErr) {
+              console.warn("Could not upsert image block:", imgErr);
+            }
+          }
+        }
+      }
+
       await updateEntry(id, {
         title: validData.title,
         slug: validData.slug,
@@ -127,6 +154,7 @@ export async function saveEntryAction(prevState: any, formData: FormData) {
         content: validData.content,
       });
     } else {
+      // 2. If creating a new entry, create without cover_image_id first to prevent circular foreign key constraint error
       const created = await createEntry({
         title: validData.title,
         slug: validData.slug,
@@ -137,10 +165,47 @@ export async function saveEntryAction(prevState: any, formData: FormData) {
         status,
         published_at,
         excerpt: validData.excerpt ?? null,
-        cover_image_id: validData.cover_image_id ?? null,
+        cover_image_id: null,
         content: validData.content,
       });
       savedId = created.id;
+
+      // 3. Link image blocks to the newly created entry id in journal_images
+      if (admin && savedId) {
+        const imageBlocks = validData.content.blocks.filter(
+          (b): b is Extract<typeof b, { type: "image" }> => b.type === "image"
+        );
+        for (let i = 0; i < imageBlocks.length; i++) {
+          const imgBlock = imageBlocks[i];
+          if (imgBlock.imageId) {
+            try {
+              await admin.from("journal_images").upsert({
+                id: imgBlock.imageId,
+                entry_id: savedId,
+                storage_path: imgBlock.storagePath || imgBlock.publicPath || `images/${imgBlock.imageId}.jpg`,
+                public_path: imgBlock.publicPath || null,
+                alt_text: imgBlock.altText || "",
+                caption: imgBlock.caption || "",
+                position: i,
+              });
+            } catch (imgErr) {
+              console.warn("Could not link image block:", imgErr);
+            }
+          }
+        }
+
+        // 4. Attach cover_image_id now that the image row exists in journal_images
+        if (validData.cover_image_id) {
+          try {
+            await admin
+              .from("journal_entries")
+              .update({ cover_image_id: validData.cover_image_id })
+              .eq("id", savedId);
+          } catch (coverErr) {
+            console.warn("Could not update cover_image_id:", coverErr);
+          }
+        }
+      }
     }
 
     revalidatePath("/journal");
@@ -264,26 +329,87 @@ export async function uploadImageAction(formData: FormData) {
     };
   }
 
-  // Save image file
-  const ext = file.name.split(".").pop() || "jpg";
-  const filename = `${crypto.randomUUID()}.${ext}`;
-  const storagePath = `private/${entryId || "drafts"}/${filename}`;
+  try {
+    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const imageId = crypto.randomUUID();
+    const filename = `${imageId}.${ext}`;
+    const storagePath = `images/${filename}`;
 
-  // In local/dev mode: store in public/uploads/ or base64 data URI
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const base64Data = `data:${file.type};base64,${buffer.toString("base64")}`;
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-  const imageRecord = await addImageRecord({
-    entry_id: entryId || "draft",
-    storage_path: storagePath,
-    public_path: null,
-    alt_text: altText,
-    caption: caption,
-    position,
-    width: null,
-    height: null,
-    url: base64Data,
-  });
+    let publicUrl: string | null = null;
+    const admin = createAdminClient();
 
-  return { success: true, image: imageRecord };
+    if (admin) {
+      // 1. Upload to Supabase Storage 'journal-public' bucket
+      const { error: uploadErr } = await admin.storage
+        .from("journal-public")
+        .upload(storagePath, buffer, {
+          contentType: file.type || "image/jpeg",
+          upsert: true,
+        });
+
+      if (uploadErr) {
+        console.error("Supabase storage upload error:", uploadErr);
+        return { error: `Failed to upload image to storage: ${uploadErr.message}` };
+      }
+
+      const { data: urlData } = admin.storage
+        .from("journal-public")
+        .getPublicUrl(storagePath);
+
+      publicUrl = urlData?.publicUrl || null;
+    }
+
+    // Fallback to data URI if storage URL wasn't produced
+    if (!publicUrl) {
+      publicUrl = `data:${file.type};base64,${buffer.toString("base64")}`;
+    }
+
+    // 2. Check if entryId is an existing UUID in journal_entries
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    const isValidEntryUuid = Boolean(entryId && uuidRegex.test(entryId));
+
+    if (isValidEntryUuid && admin) {
+      try {
+        const { data: existingEntry } = await admin
+          .from("journal_entries")
+          .select("id")
+          .eq("id", entryId)
+          .maybeSingle();
+
+        if (existingEntry) {
+          await admin.from("journal_images").upsert({
+            id: imageId,
+            entry_id: existingEntry.id,
+            storage_path: storagePath,
+            public_path: publicUrl,
+            alt_text: altText,
+            caption: caption,
+            position,
+          });
+        }
+      } catch (dbErr) {
+        console.warn("Could not record image in journal_images yet:", dbErr);
+      }
+    }
+
+    return {
+      success: true,
+      image: {
+        id: imageId,
+        entry_id: isValidEntryUuid ? entryId : "draft",
+        storage_path: storagePath,
+        public_path: publicUrl,
+        alt_text: altText,
+        caption: caption,
+        position,
+        url: publicUrl,
+      },
+    };
+  } catch (err: any) {
+    console.error("Image upload exception:", err);
+    return { error: err.message || "Failed to process and upload image." };
+  }
 }

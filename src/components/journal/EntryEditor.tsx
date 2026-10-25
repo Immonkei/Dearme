@@ -197,17 +197,17 @@ export function EntryEditor({ entry }: EntryEditorProps) {
           type: processed.blob.type,
         });
         formData.append("file", processedFile);
-        formData.append("entryId", entry?.id || "temp");
+        formData.append("entryId", entry?.id || "");
         formData.append("position", String(blocks.length + i));
 
         const res = await uploadImageAction(formData);
 
-        if (res.error) {
+        if (res?.error) {
           setUploadError(`Failed uploading ${file.name}: ${res.error}`);
           continue;
         }
 
-        if (res.image) {
+        if (res?.image) {
           newImageBlocks.push({
             id: crypto.randomUUID(),
             type: "image",
@@ -216,7 +216,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
             altText: file.name.replace(/\.[^/.]+$/, ""),
             storagePath: res.image.storage_path,
             publicPath: res.image.public_path || undefined,
-            previewUrl: processed.dataUrl,
+            previewUrl: res.image.public_path || processed.dataUrl,
           });
 
           if (!coverImageId) {
