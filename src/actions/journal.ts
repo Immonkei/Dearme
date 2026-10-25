@@ -69,15 +69,24 @@ export async function saveEntryAction(prevState: any, formData: FormData) {
     return { error: "Invalid structured content format." };
   }
 
-  // Preserve existing published status if editing; otherwise strictly 'private'
-  let status: EntryStatus = "private";
-  let published_at: string | null = null;
+  // Support publishing directly or saving privately
+  const requestedStatus = formData.get("status") as EntryStatus | null;
+  let status: EntryStatus = requestedStatus === "published" ? "published" : "private";
+  let published_at: string | null = status === "published" ? new Date().toISOString() : null;
 
   if (id) {
     const existing = await getEntryById(id);
     if (existing) {
-      status = existing.status;
-      published_at = existing.published_at;
+      if (requestedStatus) {
+        status = requestedStatus;
+        published_at =
+          status === "published"
+            ? existing.published_at || new Date().toISOString()
+            : null;
+      } else {
+        status = existing.status;
+        published_at = existing.published_at;
+      }
     }
   }
 
@@ -126,8 +135,8 @@ export async function saveEntryAction(prevState: any, formData: FormData) {
         category: validData.category ?? null,
         tags: validData.tags,
         mood: validData.mood ?? null,
-        status: "private", // Always private by default!
-        published_at: null,
+        status,
+        published_at,
         excerpt: validData.excerpt ?? null,
         cover_image_id: validData.cover_image_id ?? null,
         content: validData.content,
@@ -139,9 +148,10 @@ export async function saveEntryAction(prevState: any, formData: FormData) {
     revalidatePath("/journal/calendar");
     revalidatePath("/journal/timeline");
     revalidatePath("/entries");
+    revalidatePath(`/entries/${validData.slug}`);
     revalidatePath("/");
 
-    return { success: true, entryId: savedId };
+    return { success: true, entryId: savedId, slug: validData.slug };
   } catch (err: any) {
     return { error: err.message || "Failed to save journal entry." };
   }

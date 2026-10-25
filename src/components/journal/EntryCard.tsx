@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { JournalEntry } from "@/types/journal";
-import { Lock, Globe, Calendar, ArrowRight, Sparkles } from "lucide-react";
+import { Lock, Globe, Calendar, ArrowRight, Sparkles, ExternalLink } from "lucide-react";
 
 interface EntryCardProps {
   entry: JournalEntry;
@@ -101,13 +101,27 @@ export function EntryCard({ entry, showStatus = true }: EntryCardProps) {
           )}
         </div>
 
-        <Link
-          href={`/journal/entries/${entry.id}`}
-          className="inline-flex items-center gap-1 text-journal-accent font-semibold hover:text-journal-accent-hover transition-colors shrink-0 py-1"
-        >
-          <span>Open</span>
-          <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
-        </Link>
+        <div className="flex items-center gap-2.5 shrink-0">
+          {isPublished && (
+            <Link
+              href={`/entries/${entry.slug}`}
+              target="_blank"
+              className="inline-flex items-center gap-1 text-journal-muted hover:text-emerald-800 transition-colors py-1 text-[11px]"
+              title="View on public site"
+            >
+              <span>Public</span>
+              <ExternalLink className="w-3 h-3" />
+            </Link>
+          )}
+
+          <Link
+            href={`/journal/entries/${entry.id}`}
+            className="inline-flex items-center gap-1 text-journal-accent font-semibold hover:text-journal-accent-hover transition-colors shrink-0 py-1"
+          >
+            <span>Open</span>
+            <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </div>
       </div>
     </article>
   );

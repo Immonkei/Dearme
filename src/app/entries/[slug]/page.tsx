@@ -4,6 +4,8 @@ import { getEntryBySlug } from "@/lib/journal/repository";
 import { PublicNav, PublicFooter } from "@/components/public/PublicNav";
 import { PublicEntryView } from "@/components/public/PublicEntryView";
 
+export const dynamic = "force-dynamic";
+
 interface EntryPageProps {
   params: Promise<{
     slug: string;
@@ -20,9 +22,10 @@ export async function generateMetadata({ params }: EntryPageProps): Promise<Meta
     };
   }
 
+  const blocks = Array.isArray(entry.content?.blocks) ? entry.content.blocks : [];
   const excerpt =
     entry.excerpt ||
-    entry.content.blocks.find((b) => "text" in b)?.text?.slice(0, 160) ||
+    (blocks.find((b) => "text" in b)?.text as string)?.slice(0, 160) ||
     "A personal reflection from Dear Me.";
 
   return {

@@ -40,6 +40,7 @@ import {
   CloudRain,
   Heart,
   Compass,
+  ExternalLink,
 } from "lucide-react";
 
 interface EntryEditorProps {
@@ -65,6 +66,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
 
   // Core metadata state
   const [title, setTitle] = useState(entry?.title || "");
+  const [slug, setSlug] = useState(entry?.slug || "");
   const [entryDate, setEntryDate] = useState(
     entry?.entry_date || new Date().toISOString().split("T")[0]
   );
@@ -100,6 +102,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
   const [toastMessage, setToastMessage] = useState<{
     type: "success" | "error";
     text: string;
+    slug?: string;
   } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -269,12 +272,12 @@ export function EntryEditor({ entry }: EntryEditorProps) {
     });
   };
 
-  // Explicit Publish action
+  // Explicit Publish action (supports publishing new or existing entries)
   const handlePublish = () => {
-    if (!entry?.id) {
+    if (!title.trim()) {
       setToastMessage({
         type: "error",
-        text: "Please save your entry privately first before publishing.",
+        text: "Please enter a title for your entry before publishing.",
       });
       return;
     }
@@ -285,14 +288,53 @@ export function EntryEditor({ entry }: EntryEditorProps) {
     if (!confirmPublish) return;
 
     startTransition(async () => {
+      // If it's a new entry (no id yet), create and publish in one step
+      if (!entry?.id) {
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("entry_date", entryDate);
+        formData.append("category", category);
+        formData.append("tags", tagsInput);
+        formData.append("status", "published");
+        if (mood) formData.append("mood", mood);
+        if (excerpt) formData.append("excerpt", excerpt);
+        if (coverImageId) formData.append("cover_image_id", coverImageId);
+
+        const content: JournalContent = {
+          version: 1,
+          blocks,
+        };
+        formData.append("content", JSON.stringify(content));
+
+        const res = await saveEntryAction(null, formData);
+        if (res?.error) {
+          setToastMessage({ type: "error", text: res.error });
+        } else {
+          setStatus("published");
+          if (res?.slug) setSlug(res.slug);
+          setToastMessage({
+            type: "success",
+            text: "Entry created and published to your public journal!",
+            slug: res?.slug,
+          });
+          if (res?.entryId) {
+            router.push(`/journal/entries/${res.entryId}`);
+          }
+        }
+        return;
+      }
+
+      // Existing entry: publish directly
       const res = await publishEntryAction(entry.id);
       if (res.error) {
         setToastMessage({ type: "error", text: res.error });
       } else {
         setStatus("published");
+        if (res.slug) setSlug(res.slug);
         setToastMessage({
           type: "success",
           text: "Entry has been published to your public journal!",
+          slug: res.slug || entry.slug || slug,
         });
         router.refresh();
       }
@@ -349,13 +391,23 @@ export function EntryEditor({ entry }: EntryEditorProps) {
               : "bg-red-50/90 border-red-300 text-red-950"
           }`}
         >
-          <div className="flex items-center gap-2.5 text-xs sm:text-sm font-medium">
+          <div className="flex flex-wrap items-center gap-2.5 text-xs sm:text-sm font-medium">
             {toastMessage.type === "success" ? (
               <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
             ) : (
               <AlertCircle className="w-4 h-4 text-red-700 shrink-0" />
             )}
             <span>{toastMessage.text}</span>
+            {toastMessage.slug && (
+              <Link
+                href={`/entries/${toastMessage.slug}`}
+                target="_blank"
+                className="inline-flex items-center gap-1 font-semibold text-journal-accent underline ml-1 hover:text-journal-accent-hover"
+              >
+                <span>View Public Letter</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+            )}
           </div>
           <button
             onClick={() => setToastMessage(null)}
@@ -369,7 +421,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
 
       {/* Editor Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-journal-border mb-8">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
           <span
             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
               status === "published"
@@ -389,6 +441,18 @@ export function EntryEditor({ entry }: EntryEditorProps) {
               </>
             )}
           </span>
+
+          {status === "published" && (entry?.slug || slug) && (
+            <Link
+              href={`/entries/${entry?.slug || slug}`}
+              target="_blank"
+              className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-full transition-colors"
+              title="Open published letter on public site"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>View Public Letter</span>
+            </Link>
+          )}
 
           <button
             type="button"

@@ -1,4 +1,4 @@
-import { createClient, getAuthorizedOwner } from "@/lib/supabase/server";
+import { createClient, createAdminClient, getAuthorizedOwner } from "@/lib/supabase/server";
 import {
   JournalEntry,
   JournalImage,
@@ -14,6 +14,15 @@ import path from "path";
 const DATA_DIR = path.join(process.cwd(), ".data");
 const DATA_FILE = path.join(DATA_DIR, "journal.json");
 const HEADSPACE_FILE = path.join(DATA_DIR, "headspace.json");
+
+/**
+ * Get the active database client (prefers admin client with service role for full access)
+ */
+async function getDbClient() {
+  const admin = createAdminClient();
+  if (admin) return admin;
+  return await createClient();
+}
 
 interface LocalStore {
   entries: JournalEntry[];
@@ -231,10 +240,10 @@ export async function getEntries(
 ): Promise<JournalEntry[]> {
   if (isSupabaseConfigured()) {
     try {
-      const supabase = await createClient();
+      const supabase = await getDbClient();
       let query = supabase
         .from("journal_entries")
-        .select("*, images:journal_images(*)")
+        .select("*, images:journal_images!journal_images_entry_id_fkey(*)")
         .neq("slug", "site-headspace");
 
       if (isPublicOnly) {
@@ -349,12 +358,12 @@ export async function getEntries(
 export async function getEntryById(id: string): Promise<JournalEntry | null> {
   if (isSupabaseConfigured()) {
     try {
-      const supabase = await createClient();
+      const supabase = await getDbClient();
       const { data, error } = await supabase
         .from("journal_entries")
-        .select("*, images:journal_images(*)")
+        .select("*, images:journal_images!journal_images_entry_id_fkey(*)")
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (!error && data) {
         return data as JournalEntry;
@@ -381,13 +390,13 @@ export async function getEntryBySlug(slug: string): Promise<JournalEntry | null>
 
   if (isSupabaseConfigured()) {
     try {
-      const supabase = await createClient();
+      const supabase = await getDbClient();
       const { data, error } = await supabase
         .from("journal_entries")
-        .select("*, images:journal_images(*)")
+        .select("*, images:journal_images!journal_images_entry_id_fkey(*)")
         .eq("slug", slug)
         .eq("status", "published")
-        .single();
+        .maybeSingle();
 
       if (!error && data) {
         return data as JournalEntry;
@@ -426,7 +435,7 @@ export async function createEntry(
 
   if (isSupabaseConfigured()) {
     try {
-      const supabase = await createClient();
+      const supabase = await getDbClient();
       const { data: inserted, error } = await supabase
         .from("journal_entries")
         .insert({
@@ -468,7 +477,7 @@ export async function updateEntry(
 
   if (isSupabaseConfigured()) {
     try {
-      const supabase = await createClient();
+      const supabase = await getDbClient();
       const { data, error } = await supabase
         .from("journal_entries")
         .update({
@@ -504,7 +513,7 @@ export async function updateEntry(
 export async function deleteEntry(id: string): Promise<boolean> {
   if (isSupabaseConfigured()) {
     try {
-      const supabase = await createClient();
+      const supabase = await getDbClient();
       const { error } = await supabase
         .from("journal_entries")
         .delete()
@@ -549,7 +558,7 @@ export async function addImageRecord(
 
   if (isSupabaseConfigured()) {
     try {
-      const supabase = await createClient();
+      const supabase = await getDbClient();
       const { data, error } = await supabase
         .from("journal_images")
         .insert(newImage)
