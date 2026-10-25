@@ -86,8 +86,11 @@ export default async function EntriesPage({ searchParams }: EntriesPageProps) {
                 year: "numeric",
               });
 
-              const wordCount = entry.content.blocks.reduce((acc, b) => {
-                return acc + ("text" in b ? b.text.split(/\s+/).length : 0);
+              const blocks = Array.isArray(entry.content?.blocks)
+                ? entry.content.blocks
+                : [];
+              const wordCount = blocks.reduce((acc, b) => {
+                return acc + ("text" in b && typeof b.text === "string" ? b.text.split(/\s+/).length : 0);
               }, 0);
               const readTime = Math.max(1, Math.ceil(wordCount / 180));
 

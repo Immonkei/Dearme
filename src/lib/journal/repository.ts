@@ -377,6 +377,8 @@ export async function getEntryById(id: string): Promise<JournalEntry | null> {
 }
 
 export async function getEntryBySlug(slug: string): Promise<JournalEntry | null> {
+  if (slug === "site-headspace") return null;
+
   if (isSupabaseConfigured()) {
     try {
       const supabase = await createClient();

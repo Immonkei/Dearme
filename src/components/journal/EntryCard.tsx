@@ -17,9 +17,10 @@ export function EntryCard({ entry, showStatus = true }: EntryCardProps) {
     }
   );
 
+  const blocks = Array.isArray(entry.content?.blocks) ? entry.content.blocks : [];
   const previewText =
     entry.excerpt ||
-    (entry.content?.blocks?.find((b) => "text" in b)?.text as string) ||
+    (blocks.find((b) => "text" in b)?.text as string) ||
     "No preview available.";
 
   const isPublished = entry.status === "published";

@@ -41,9 +41,10 @@ export function TimelineView({ entries }: TimelineViewProps) {
               });
 
               const isPublished = entry.status === "published";
+              const blocks = Array.isArray(entry.content?.blocks) ? entry.content.blocks : [];
               const preview =
                 entry.excerpt ||
-                entry.content.blocks.find((b) => "text" in b)?.text ||
+                blocks.find((b) => "text" in b)?.text ||
                 "";
 
               return (
