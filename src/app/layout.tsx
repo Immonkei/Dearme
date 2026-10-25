@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${lora.variable} ${jakarta.variable}`}>
+    <html lang="en" className={`${lora.variable} ${jakarta.variable} scroll-smooth`}>
       <body className="min-h-screen bg-journal-bg text-journal-text antialiased selection:bg-journal-accent/20">
         {children}
       </body>

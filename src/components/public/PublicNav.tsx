@@ -8,9 +8,9 @@ export function PublicNav() {
   const pathname = usePathname();
 
   const links = [
-    { href: "/", label: "Home" },
-    { href: "/entries", label: "Letters" },
-    { href: "/about", label: "Why I Write" },
+    { href: "/#about", label: "Why I Write" },
+    { href: "/#letters", label: "Letters" },
+    { href: "/#moments", label: "Notes" },
   ];
 
   return (
@@ -65,19 +65,33 @@ export function PublicFooter() {
           </p>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-5 sm:gap-6">
           <Link
-            href="/about"
+            href="/#about"
             className="hover:text-journal-text transition-colors font-medium"
           >
             Why I Write
           </Link>
           <span aria-hidden="true" className="text-journal-muted/50">•</span>
           <Link
-            href="/entries"
+            href="/#letters"
             className="hover:text-journal-text transition-colors font-medium"
           >
             Letters
+          </Link>
+          <span aria-hidden="true" className="text-journal-muted/50">•</span>
+          <Link
+            href="/#moments"
+            className="hover:text-journal-text transition-colors font-medium"
+          >
+            Notes
+          </Link>
+          <span aria-hidden="true" className="text-journal-muted/50">•</span>
+          <Link
+            href="/#top"
+            className="hover:text-journal-text transition-colors font-medium text-journal-accent"
+          >
+            ↑ Top
           </Link>
         </div>
       </div>
