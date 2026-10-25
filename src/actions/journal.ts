@@ -11,6 +11,7 @@ import {
   unpublishEntry,
   addImageRecord,
   getEntryById,
+  ensureUniqueSlug,
 } from "@/lib/journal/repository";
 import {
   EntryFormSchema,
@@ -40,7 +41,7 @@ export async function saveEntryAction(prevState: any, formData: FormData) {
 
   const id = formData.get("id") as string | null;
   const title = (formData.get("title") as string)?.trim();
-  let slug = (formData.get("slug") as string)?.trim();
+  const rawSlug = (formData.get("slug") as string)?.trim() || title;
   const entry_date = formData.get("entry_date") as string;
   const category = (formData.get("category") as string)?.trim() || null;
   const mood = (formData.get("mood") as string)?.trim() || null;
@@ -49,9 +50,7 @@ export async function saveEntryAction(prevState: any, formData: FormData) {
   const tagsRaw = formData.get("tags") as string;
   const contentJson = formData.get("content") as string;
 
-  if (!slug && title) {
-    slug = slugify(title);
-  }
+  const slug = await ensureUniqueSlug(rawSlug, id || undefined);
 
   const tags = tagsRaw
     ? tagsRaw
@@ -147,6 +146,9 @@ export async function saveEntryAction(prevState: any, formData: FormData) {
     revalidatePath("/journal");
     revalidatePath("/journal/calendar");
     revalidatePath("/journal/timeline");
+    if (savedId) {
+      revalidatePath(`/journal/entries/${savedId}`);
+    }
     revalidatePath("/entries");
     revalidatePath(`/entries/${validData.slug}`);
     revalidatePath("/");
@@ -212,15 +214,19 @@ export async function deleteEntryAction(id: string) {
     return { error: "Unauthorized." };
   }
 
-  await deleteEntry(id);
+  try {
+    await deleteEntry(id);
 
-  revalidatePath("/journal");
-  revalidatePath("/journal/calendar");
-  revalidatePath("/journal/timeline");
-  revalidatePath("/entries");
-  revalidatePath("/");
+    revalidatePath("/journal");
+    revalidatePath("/journal/calendar");
+    revalidatePath("/journal/timeline");
+    revalidatePath("/entries");
+    revalidatePath("/");
 
-  redirect("/journal");
+    return { success: true };
+  } catch (err: any) {
+    return { error: err.message || "Failed to delete entry." };
+  }
 }
 
 /**

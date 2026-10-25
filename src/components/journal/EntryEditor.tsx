@@ -233,20 +233,31 @@ export function EntryEditor({ entry }: EntryEditorProps) {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // Save Privately
-  const handleSavePrivately = () => {
+  // Save Action (Saves current state; keeps existing status or updates status)
+  const handleSave = (targetStatus?: "private" | "published") => {
     if (!title.trim()) {
       setToastMessage({ type: "error", text: "Please enter a title for your entry." });
       return;
+    }
+
+    const desiredStatus = targetStatus || status;
+
+    if (desiredStatus === "published" && status !== "published") {
+      const confirmPublish = window.confirm(
+        "Are you sure you want to publish this letter? It will become publicly readable by anyone visiting your journal."
+      );
+      if (!confirmPublish) return;
     }
 
     startTransition(async () => {
       const formData = new FormData();
       if (entry?.id) formData.append("id", entry.id);
       formData.append("title", title);
+      if (slug) formData.append("slug", slug);
       formData.append("entry_date", entryDate);
       formData.append("category", category);
       formData.append("tags", tagsInput);
+      formData.append("status", desiredStatus);
       if (mood) formData.append("mood", mood);
       if (excerpt) formData.append("excerpt", excerpt);
       if (coverImageId) formData.append("cover_image_id", coverImageId);
@@ -262,82 +273,28 @@ export function EntryEditor({ entry }: EntryEditorProps) {
       if (res?.error) {
         setToastMessage({ type: "error", text: res.error });
       } else {
-        setToastMessage({
-          type: "success",
-          text: "Saved privately to your journal.",
-        });
-        if (!entry?.id && res?.entryId) {
-          router.push(`/journal/entries/${res.entryId}`);
-        }
-      }
-    });
-  };
+        setStatus(desiredStatus);
+        const resolvedSlug = res?.slug || slug;
+        if (res?.slug) setSlug(res.slug);
 
-  // Explicit Publish action (supports publishing new or existing entries)
-  const handlePublish = () => {
-    if (!title.trim()) {
-      setToastMessage({
-        type: "error",
-        text: "Please enter a title for your entry before publishing.",
-      });
-      return;
-    }
-
-    const confirmPublish = window.confirm(
-      "Are you sure you want to publish this entry? It will become publicly readable by anyone visiting your journal."
-    );
-    if (!confirmPublish) return;
-
-    startTransition(async () => {
-      // If it's a new entry (no id yet), create and publish in one step
-      if (!entry?.id) {
-        const formData = new FormData();
-        formData.append("title", title);
-        formData.append("entry_date", entryDate);
-        formData.append("category", category);
-        formData.append("tags", tagsInput);
-        formData.append("status", "published");
-        if (mood) formData.append("mood", mood);
-        if (excerpt) formData.append("excerpt", excerpt);
-        if (coverImageId) formData.append("cover_image_id", coverImageId);
-
-        const content: JournalContent = {
-          version: 1,
-          blocks,
-        };
-        formData.append("content", JSON.stringify(content));
-
-        const res = await saveEntryAction(null, formData);
-        if (res?.error) {
-          setToastMessage({ type: "error", text: res.error });
-        } else {
-          setStatus("published");
-          if (res?.slug) setSlug(res.slug);
+        if (desiredStatus === "published") {
           setToastMessage({
             type: "success",
-            text: "Entry created and published to your public journal!",
-            slug: res?.slug,
+            text: "Letter published! It is live on your public journal.",
+            slug: resolvedSlug,
           });
-          if (res?.entryId) {
-            router.push(`/journal/entries/${res.entryId}`);
-          }
+        } else {
+          setToastMessage({
+            type: "success",
+            text: "Saved privately to your journal.",
+          });
         }
-        return;
-      }
 
-      // Existing entry: publish directly
-      const res = await publishEntryAction(entry.id);
-      if (res.error) {
-        setToastMessage({ type: "error", text: res.error });
-      } else {
-        setStatus("published");
-        if (res.slug) setSlug(res.slug);
-        setToastMessage({
-          type: "success",
-          text: "Entry has been published to your public journal!",
-          slug: res.slug || entry.slug || slug,
-        });
-        router.refresh();
+        if (!entry?.id && res?.entryId) {
+          router.push(`/journal/entries/${res.entryId}`);
+        } else {
+          router.refresh();
+        }
       }
     });
   };
@@ -375,7 +332,13 @@ export function EntryEditor({ entry }: EntryEditorProps) {
     if (!confirmDelete) return;
 
     startTransition(async () => {
-      await deleteEntryAction(entry.id);
+      const res = await deleteEntryAction(entry.id);
+      if (res?.error) {
+        setToastMessage({ type: "error", text: res.error });
+      } else {
+        router.push("/journal");
+        router.refresh();
+      }
     });
   };
 
@@ -399,7 +362,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
               <AlertCircle className="w-4 h-4 text-red-700 shrink-0" />
             )}
             <span>{toastMessage.text}</span>
-            {toastMessage.slug && (
+            {toastMessage.slug && status === "published" && (
               <Link
                 href={`/entries/${toastMessage.slug}`}
                 target="_blank"
@@ -475,13 +438,13 @@ export function EntryEditor({ entry }: EntryEditorProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
           {entry?.id && (
             <button
               type="button"
               onClick={handleDelete}
               disabled={isPending}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-800 hover:bg-red-50 border border-red-200 rounded-lg transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-800 hover:bg-red-50 border border-red-200 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Delete</span>
@@ -493,7 +456,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
               type="button"
               onClick={handleUnpublish}
               disabled={isPending}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
             >
               <Lock className="w-3.5 h-3.5" />
               <span>Make Private (Unpublish)</span>
@@ -501,28 +464,28 @@ export function EntryEditor({ entry }: EntryEditorProps) {
           ) : (
             <button
               type="button"
-              onClick={handlePublish}
+              onClick={() => handleSave("published")}
               disabled={isPending}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-900 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-900 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
             >
               <Globe className="w-3.5 h-3.5 text-emerald-700" />
               <span>Publish Publicly</span>
             </button>
           )}
 
-          {/* Primary Action: Save Privately */}
+          {/* Primary Action Button */}
           <button
             type="button"
-            onClick={handleSavePrivately}
+            onClick={() => handleSave()}
             disabled={isPending}
-            className="inline-flex items-center gap-2 px-5 py-2 text-xs sm:text-sm font-semibold text-white bg-journal-accent hover:bg-journal-accent-hover rounded-lg transition-colors shadow-xs cursor-pointer disabled:opacity-60"
+            className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white bg-journal-accent hover:bg-journal-accent-hover rounded-lg transition-colors shadow-xs cursor-pointer disabled:opacity-60"
           >
             {isPending ? (
               <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <Save className="w-4 h-4" />
             )}
-            <span>Save Privately</span>
+            <span>{status === "published" ? "Save Changes" : "Save as Draft"}</span>
           </button>
         </div>
       </div>

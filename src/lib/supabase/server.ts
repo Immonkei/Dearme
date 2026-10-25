@@ -1,13 +1,17 @@
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
+import {
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY,
+  SUPABASE_SERVICE_ROLE_KEY,
+  OWNER_EMAIL,
+} from "@/lib/config/env";
 
 export async function createClient() {
   const cookieStore = await cookies();
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder-project.supabase.co";
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-anon-key";
 
-  return createServerClient(url, anonKey, {
+  return createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -29,14 +33,11 @@ export async function createClient() {
  * Admin client with service role for trusted server actions
  */
 export function createAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!url || !serviceKey || url.includes("placeholder") || serviceKey.includes("placeholder")) {
+  if (!SUPABASE_SERVICE_ROLE_KEY) {
     return null;
   }
 
-  return createSupabaseClient(url, serviceKey, {
+  return createSupabaseClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
@@ -49,20 +50,15 @@ export function createAdminClient() {
  */
 export async function getAuthorizedOwner() {
   const cookieStore = await cookies();
-  
+
   // Dev cookie check
   const devAuth = cookieStore.get("dearme_dev_auth");
   if (devAuth?.value === "authenticated") {
     return {
       id: "owner-dev-uuid",
-      email: process.env.OWNER_EMAIL || "owner@example.com",
+      email: OWNER_EMAIL,
       role: "authenticated",
     };
-  }
-
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!url || url.includes("placeholder")) {
-    return null;
   }
 
   try {
@@ -75,8 +71,7 @@ export async function getAuthorizedOwner() {
       return null;
     }
 
-    const ownerEmail = process.env.OWNER_EMAIL;
-    if (ownerEmail && user.email?.toLowerCase() !== ownerEmail.toLowerCase()) {
+    if (OWNER_EMAIL && user.email?.toLowerCase() !== OWNER_EMAIL.toLowerCase()) {
       return null;
     }
 

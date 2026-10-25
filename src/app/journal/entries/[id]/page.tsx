@@ -3,6 +3,7 @@ import { getEntryById } from "@/lib/journal/repository";
 import { EntryEditor } from "@/components/journal/EntryEditor";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 interface EntryPageProps {
   params: Promise<{

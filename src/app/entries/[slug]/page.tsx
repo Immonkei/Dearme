@@ -5,6 +5,7 @@ import { PublicNav, PublicFooter } from "@/components/public/PublicNav";
 import { PublicEntryView } from "@/components/public/PublicEntryView";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 interface EntryPageProps {
   params: Promise<{

@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { OWNER_EMAIL } from "@/lib/config/env";
 
 export async function signIn(formData: FormData) {
   const email = (formData.get("email") as string)?.trim();
@@ -13,70 +14,57 @@ export async function signIn(formData: FormData) {
     return { error: "Please enter both email and password." };
   }
 
-  const ownerEmail = process.env.OWNER_EMAIL || "owner@example.com";
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const isOwnerEmail = email.toLowerCase() === OWNER_EMAIL.toLowerCase();
 
-  // Support local dev mode when Supabase is not connected yet
-  if (!url || url.includes("placeholder")) {
-    if (email.toLowerCase() === ownerEmail.toLowerCase()) {
-      const cookieStore = await cookies();
-      cookieStore.set("dearme_dev_auth", "authenticated", {
-        path: "/",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 7,
-      });
+  // Try signing in via Supabase Auth
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (!error) {
+      if (!isOwnerEmail) {
+        await supabase.auth.signOut();
+        return { error: "This account is not authorized as the journal owner." };
+      }
       redirect(redirectTo);
-    } else {
-      return { error: `Unauthorized email. Access is reserved for ${ownerEmail}.` };
+    }
+  } catch (err: any) {
+    if (err?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw err;
     }
   }
 
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) {
-    if (
-      email.toLowerCase() === ownerEmail.toLowerCase() &&
-      (password === "nithh123" || password === "devpassword")
-    ) {
-      const cookieStore = await cookies();
-      cookieStore.set("dearme_dev_auth", "authenticated", {
-        path: "/",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 7,
-      });
-      redirect(redirectTo);
-    }
-    return { error: error.message };
+  // Fallback owner direct password check (nithh123, devpassword, or admin123)
+  if (
+    isOwnerEmail &&
+    (password === "nithh123" || password === "devpassword" || password === "admin123")
+  ) {
+    const cookieStore = await cookies();
+    cookieStore.set("dearme_dev_auth", "authenticated", {
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+    redirect(redirectTo);
   }
 
-  if (ownerEmail && email.toLowerCase() !== ownerEmail.toLowerCase()) {
-    await supabase.auth.signOut();
-    return { error: "This account is not authorized as the journal owner." };
-  }
-
-  redirect(redirectTo);
+  return { error: "Invalid email or password." };
 }
 
 export async function signOut() {
   const cookieStore = await cookies();
   cookieStore.delete("dearme_dev_auth");
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (url && !url.includes("placeholder")) {
-    try {
-      const supabase = await createClient();
-      await supabase.auth.signOut();
-    } catch {
-      // Ignore
-    }
+  try {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+  } catch {
+    // Ignore
   }
 
   redirect("/login");

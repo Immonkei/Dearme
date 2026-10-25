@@ -4,6 +4,7 @@ import { PublicNav, PublicFooter } from "@/components/public/PublicNav";
 import { Calendar, Clock, ArrowRight, Filter, Feather } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 interface EntriesPageProps {
   searchParams: Promise<{

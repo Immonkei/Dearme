@@ -1,4 +1,5 @@
 import { createClient, createAdminClient, getAuthorizedOwner } from "@/lib/supabase/server";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config/env";
 import {
   JournalEntry,
   JournalImage,
@@ -220,14 +221,73 @@ function writeLocalStore(store: LocalStore) {
 }
 
 function isSupabaseConfigured(): boolean {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   return Boolean(
-    url &&
-    !url.includes("placeholder") &&
-    anonKey &&
-    !anonKey.includes("placeholder")
+    SUPABASE_URL &&
+    !SUPABASE_URL.includes("placeholder") &&
+    SUPABASE_ANON_KEY &&
+    !SUPABASE_ANON_KEY.includes("placeholder")
   );
+}
+
+/**
+ * Ensures a unique, URL-safe slug that never collides with existing entries
+ * or violates PostgreSQL UNIQUE constraints.
+ */
+export async function ensureUniqueSlug(
+  baseSlug: string,
+  excludeId?: string
+): Promise<string> {
+  let clean = baseSlug
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  if (!clean || clean === "site-headspace") {
+    clean = `letter-${Date.now().toString(36)}`;
+  }
+
+  let candidate = clean;
+  let counter = 1;
+
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await getDbClient();
+      while (true) {
+        let query = supabase
+          .from("journal_entries")
+          .select("id")
+          .eq("slug", candidate);
+
+        if (excludeId) {
+          query = query.neq("id", excludeId);
+        }
+
+        const { data, error } = await query.maybeSingle();
+        if (error || !data) {
+          return candidate;
+        }
+
+        counter++;
+        candidate = `${clean}-${counter}`;
+      }
+    } catch {
+      // Fall through to local check
+    }
+  }
+
+  const store = readLocalStore();
+  while (true) {
+    const exists = store.entries.some(
+      (e) => e.slug === candidate && (!excludeId || e.id !== excludeId)
+    );
+    if (!exists) {
+      return candidate;
+    }
+    counter++;
+    candidate = `${clean}-${counter}`;
+  }
 }
 
 /**
@@ -455,11 +515,17 @@ export async function createEntry(
         .select()
         .single();
 
-      if (!error && inserted) {
+      if (error) {
+        console.error("Supabase createEntry error:", error);
+        throw new Error(error.message);
+      }
+
+      if (inserted) {
         return inserted as JournalEntry;
       }
     } catch (err) {
-      console.warn("Supabase createEntry failed:", err);
+      console.error("Supabase createEntry failed:", err);
+      throw err;
     }
   }
 
@@ -488,11 +554,17 @@ export async function updateEntry(
         .select()
         .single();
 
-      if (!error && data) {
+      if (error) {
+        console.error("Supabase updateEntry error:", error);
+        throw new Error(error.message);
+      }
+
+      if (data) {
         return data as JournalEntry;
       }
     } catch (err) {
-      console.warn("Supabase updateEntry failed:", err);
+      console.error("Supabase updateEntry failed:", err);
+      throw err;
     }
   }
 
@@ -518,9 +590,14 @@ export async function deleteEntry(id: string): Promise<boolean> {
         .from("journal_entries")
         .delete()
         .eq("id", id);
-      if (!error) return true;
+      if (error) {
+        console.error("Supabase deleteEntry error:", error);
+        throw new Error(error.message);
+      }
+      return true;
     } catch (err) {
-      console.warn("Supabase deleteEntry failed:", err);
+      console.error("Supabase deleteEntry failed:", err);
+      throw err;
     }
   }
 
@@ -673,7 +750,7 @@ export async function saveHeadspace(
   // Write to Supabase if configured
   if (isSupabaseConfigured()) {
     try {
-      const supabase = await createClient();
+      const supabase = await getDbClient();
       const payload = {
         title: "Current Headspace",
         slug: "site-headspace",
