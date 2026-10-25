@@ -12,6 +12,7 @@ import {
   ExternalLink,
   LogOut,
   Lock,
+  Brain,
 } from "lucide-react";
 
 export function JournalNav() {
@@ -20,6 +21,7 @@ export function JournalNav() {
   const navLinks = [
     { href: "/journal", label: "Entries", icon: BookOpen },
     { href: "/journal/new", label: "Write", icon: Plus, highlight: true },
+    { href: "/journal/headspace", label: "Headspace", icon: Brain },
     { href: "/journal/calendar", label: "Calendar", icon: Calendar },
     { href: "/journal/timeline", label: "Timeline", icon: Clock },
     { href: "/journal/search", label: "Search", icon: Search },

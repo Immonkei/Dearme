@@ -4,6 +4,8 @@ import {
   JournalImage,
   EntryFilterParams,
   JournalContent,
+  HeadspaceData,
+  DEFAULT_HEADSPACE,
 } from "@/types/journal";
 import fs from "fs";
 import path from "path";
@@ -11,6 +13,7 @@ import path from "path";
 // Local persistent file for offline/dev testing when Supabase is not configured
 const DATA_DIR = path.join(process.cwd(), ".data");
 const DATA_FILE = path.join(DATA_DIR, "journal.json");
+const HEADSPACE_FILE = path.join(DATA_DIR, "headspace.json");
 
 interface LocalStore {
   entries: JournalEntry[];
@@ -211,7 +214,10 @@ export async function getEntries(
   if (isSupabaseConfigured()) {
     try {
       const supabase = await createClient();
-      let query = supabase.from("journal_entries").select("*, images:journal_images(*)");
+      let query = supabase
+        .from("journal_entries")
+        .select("*, images:journal_images(*)")
+        .neq("slug", "site-headspace");
 
       if (isPublicOnly) {
         query = query.eq("status", "published");
@@ -262,7 +268,7 @@ export async function getEntries(
 
   // Local fallback
   const store = readLocalStore();
-  let entries = [...store.entries];
+  let entries = store.entries.filter((e) => e.slug !== "site-headspace");
 
   if (isPublicOnly) {
     entries = entries.filter((e) => e.status === "published");
@@ -554,4 +560,117 @@ export async function getCalendarDates(): Promise<Record<string, number>> {
   }
 
   return counts;
+}
+
+/**
+ * Headspace Functions: Dynamic personal headspace for the owner
+ */
+export async function getHeadspace(): Promise<HeadspaceData> {
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from("journal_entries")
+        .select("content, updated_at")
+        .eq("slug", "site-headspace")
+        .maybeSingle();
+
+      if (
+        !error &&
+        data?.content &&
+        typeof data.content === "object" &&
+        "headspace" in data.content
+      ) {
+        const hs = (data.content as Record<string, unknown>)
+          .headspace as HeadspaceData;
+        return {
+          stateOfMind: hs.stateOfMind || DEFAULT_HEADSPACE.stateOfMind,
+          dailyRitual: hs.dailyRitual || DEFAULT_HEADSPACE.dailyRitual,
+          lettingGoOf: hs.lettingGoOf || DEFAULT_HEADSPACE.lettingGoOf,
+          holdingOnto: hs.holdingOnto || DEFAULT_HEADSPACE.holdingOnto,
+          updatedAt: data.updated_at,
+        };
+      }
+    } catch (err) {
+      console.warn("Error reading headspace from Supabase:", err);
+    }
+  }
+
+  // Local fallback
+  try {
+    if (fs.existsSync(HEADSPACE_FILE)) {
+      const raw = fs.readFileSync(HEADSPACE_FILE, "utf-8");
+      const parsed = JSON.parse(raw);
+      return {
+        stateOfMind: parsed.stateOfMind || DEFAULT_HEADSPACE.stateOfMind,
+        dailyRitual: parsed.dailyRitual || DEFAULT_HEADSPACE.dailyRitual,
+        lettingGoOf: parsed.lettingGoOf || DEFAULT_HEADSPACE.lettingGoOf,
+        holdingOnto: parsed.holdingOnto || DEFAULT_HEADSPACE.holdingOnto,
+        updatedAt: parsed.updatedAt,
+      };
+    }
+  } catch (err) {
+    console.warn("Error reading local headspace fallback:", err);
+  }
+
+  return DEFAULT_HEADSPACE;
+}
+
+export async function saveHeadspace(
+  data: HeadspaceData
+): Promise<{ error?: string }> {
+  const sanitized: HeadspaceData = {
+    stateOfMind: data.stateOfMind?.trim() || DEFAULT_HEADSPACE.stateOfMind,
+    dailyRitual: data.dailyRitual?.trim() || DEFAULT_HEADSPACE.dailyRitual,
+    lettingGoOf: data.lettingGoOf?.trim() || DEFAULT_HEADSPACE.lettingGoOf,
+    holdingOnto: data.holdingOnto?.trim() || DEFAULT_HEADSPACE.holdingOnto,
+    updatedAt: new Date().toISOString(),
+  };
+
+  // Always write to local file for persistence
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(
+      HEADSPACE_FILE,
+      JSON.stringify(sanitized, null, 2),
+      "utf-8"
+    );
+  } catch (err) {
+    console.warn("Could not write local headspace file:", err);
+  }
+
+  // Write to Supabase if configured
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const payload = {
+        title: "Current Headspace",
+        slug: "site-headspace",
+        category: "System",
+        status: "published",
+        content: {
+          version: 1,
+          headspace: sanitized,
+        },
+      };
+
+      const { error } = await supabase
+        .from("journal_entries")
+        .upsert(payload, { onConflict: "slug" });
+
+      if (error) {
+        console.error("Supabase error saving headspace:", error);
+        return { error: error.message };
+      }
+    } catch (err: unknown) {
+      console.error("Failed to save headspace to Supabase:", err);
+      const message =
+        err instanceof Error ? err.message : "Failed to save to database";
+      return { error: message };
+    }
+  }
+
+  return {};
 }

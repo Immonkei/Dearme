@@ -94,3 +94,22 @@ export interface EntryFilterParams {
   status?: EntryStatus | "all";
   sort?: "date_desc" | "date_asc" | "updated_desc";
 }
+
+export interface HeadspaceData {
+  stateOfMind: string;
+  dailyRitual: string;
+  lettingGoOf: string;
+  holdingOnto: string;
+  updatedAt?: string;
+}
+
+export const DEFAULT_HEADSPACE: HeadspaceData = {
+  stateOfMind:
+    "Learning to quiet the 2:00 AM overthinking and trust that doing my best today was enough.",
+  dailyRitual:
+    "Early morning silence before anyone speaks. Hot coffee, cool air, and zero screens for 30 minutes.",
+  lettingGoOf:
+    "The pressure to have my entire twenties figured out. Closed doors that I tried too hard to keep open.",
+  holdingOnto:
+    "Gentleness with my own mistakes. Friends who love me in my quiet seasons. The person I am becoming.",
+};

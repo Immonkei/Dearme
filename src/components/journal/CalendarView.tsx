@@ -67,18 +67,18 @@ export function CalendarView({ entries, initialDate }: CalendarViewProps) {
   const selectedEntries = entriesByDate[selectedDate] || [];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Calendar Card */}
-      <div className="bg-white border border-journal-border rounded-2xl p-6 sm:p-8 shadow-xs">
+      <div className="bg-white border border-journal-border rounded-xl sm:rounded-2xl p-3.5 sm:p-6 md:p-8 shadow-xs">
         {/* Navigation Bar */}
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-journal-border">
-          <div className="flex items-center gap-3">
-            <h2 className="font-journal-serif text-2xl sm:text-3xl font-bold text-journal-text">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-journal-border">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <h2 className="font-journal-serif text-xl sm:text-2xl md:text-3xl font-bold text-journal-text">
               {monthName}
             </h2>
             <button
               onClick={goToToday}
-              className="text-xs px-3 py-1 font-semibold text-journal-muted hover:text-journal-text bg-journal-bg border border-journal-border rounded-lg hover:bg-journal-tag transition-colors"
+              className="text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 font-semibold text-journal-muted hover:text-journal-text bg-journal-bg border border-journal-border rounded-lg hover:bg-journal-tag transition-colors min-h-[32px] inline-flex items-center"
             >
               Today
             </button>
@@ -87,23 +87,23 @@ export function CalendarView({ entries, initialDate }: CalendarViewProps) {
           <div className="flex items-center gap-1">
             <button
               onClick={prevMonth}
-              className="p-2 text-journal-muted hover:text-journal-text rounded-lg hover:bg-journal-bg transition-colors"
+              className="p-2 text-journal-muted hover:text-journal-text rounded-lg hover:bg-journal-bg transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
               aria-label="Previous month"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
             <button
               onClick={nextMonth}
-              className="p-2 text-journal-muted hover:text-journal-text rounded-lg hover:bg-journal-bg transition-colors"
+              className="p-2 text-journal-muted hover:text-journal-text rounded-lg hover:bg-journal-bg transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
               aria-label="Next month"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>
 
         {/* Days of week */}
-        <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-journal-muted mb-3 uppercase tracking-wider">
+        <div className="grid grid-cols-7 gap-1 text-center text-[10px] sm:text-xs font-semibold text-journal-muted mb-2 sm:mb-3 uppercase tracking-wider">
           <div>Sun</div>
           <div>Mon</div>
           <div>Tue</div>
@@ -114,12 +114,12 @@ export function CalendarView({ entries, initialDate }: CalendarViewProps) {
         </div>
 
         {/* Calendar Grid */}
-        <div className="grid grid-cols-7 gap-1.5 sm:gap-2.5">
+        <div className="grid grid-cols-7 gap-1 sm:gap-2 md:gap-2.5">
           {/* Empty cells before month start */}
           {Array.from({ length: firstDayOfMonth }).map((_, i) => (
             <div
               key={`empty-${i}`}
-              className="h-16 sm:h-22 bg-journal-bg/20 rounded-xl"
+              className="h-12 sm:h-18 md:h-22 bg-journal-bg/25 rounded-lg sm:rounded-xl"
             />
           ))}
 
@@ -138,7 +138,7 @@ export function CalendarView({ entries, initialDate }: CalendarViewProps) {
               <button
                 key={dateStr}
                 onClick={() => setSelectedDate(dateStr)}
-                className={`h-16 sm:h-22 p-2.5 rounded-xl text-left flex flex-col justify-between border transition-all cursor-pointer ${
+                className={`h-12 sm:h-18 md:h-22 p-1 sm:p-2 md:p-2.5 rounded-lg sm:rounded-xl text-left flex flex-col justify-between border transition-all cursor-pointer ${
                   isSelected
                     ? "bg-journal-accent-light/60 border-journal-accent ring-2 ring-journal-accent/30"
                     : hasEntries
@@ -146,11 +146,11 @@ export function CalendarView({ entries, initialDate }: CalendarViewProps) {
                     : "bg-white/50 border-journal-border/50 hover:bg-white"
                 }`}
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between w-full">
                   <span
-                    className={`text-xs sm:text-sm font-semibold tabular-nums ${
+                    className={`text-[11px] sm:text-xs md:text-sm font-semibold tabular-nums ${
                       isToday
-                        ? "w-6 h-6 rounded-full bg-journal-accent text-white flex items-center justify-center font-bold"
+                        ? "w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-journal-accent text-white flex items-center justify-center font-bold text-[10px] sm:text-xs"
                         : isSelected
                         ? "text-journal-accent font-bold"
                         : "text-journal-text"
@@ -160,12 +160,12 @@ export function CalendarView({ entries, initialDate }: CalendarViewProps) {
                   </span>
 
                   {hasEntries && (
-                    <span className="w-2 h-2 rounded-full bg-journal-accent" />
+                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-journal-accent" />
                   )}
                 </div>
 
                 {hasEntries && (
-                  <span className="hidden sm:inline text-[11px] text-journal-muted font-medium truncate tabular-nums">
+                  <span className="hidden sm:inline text-[10px] md:text-[11px] text-journal-muted font-medium truncate tabular-nums">
                     {dayEntries.length}{" "}
                     {dayEntries.length === 1 ? "entry" : "entries"}
                   </span>

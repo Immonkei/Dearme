@@ -110,4 +110,12 @@ describe("Dear Me — Validation & Privacy Tests", () => {
     const result = EntryFormSchema.safeParse(validImageEntry);
     assert.equal(result.success, true);
   });
+
+  test("Headspace default values contain all 4 dynamic reflection fields", async () => {
+    const { DEFAULT_HEADSPACE } = await import("../src/types/journal.ts");
+    assert.ok(DEFAULT_HEADSPACE.stateOfMind.length > 0);
+    assert.ok(DEFAULT_HEADSPACE.dailyRitual.length > 0);
+    assert.ok(DEFAULT_HEADSPACE.lettingGoOf.length > 0);
+    assert.ok(DEFAULT_HEADSPACE.holdingOnto.length > 0);
+  });
 });

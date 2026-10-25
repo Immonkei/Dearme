@@ -15,13 +15,13 @@ export default function LoginPage() {
   );
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-journal-bg text-journal-text selection:bg-journal-accent/20">
+    <main className="min-h-screen flex flex-col items-center justify-center px-4 py-8 sm:py-12 bg-journal-bg text-journal-text selection:bg-journal-accent/20">
       <div className="w-full max-w-md">
         {/* Top return link */}
-        <div className="mb-8">
+        <div className="mb-6">
           <Link
             href="/"
-            className="inline-flex items-center text-xs font-semibold text-journal-muted hover:text-journal-text transition-colors gap-2 group"
+            className="inline-flex items-center text-xs font-semibold text-journal-muted hover:text-journal-text transition-colors gap-2 group py-1"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
             <span>Back to Home</span>
@@ -29,34 +29,34 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-white border border-journal-border rounded-2xl p-8 sm:p-10 shadow-xs">
-          <div className="text-center mb-8">
-            <div className="w-12 h-12 bg-journal-accent-light text-journal-accent rounded-full flex items-center justify-center mx-auto mb-4">
-              <Lock className="w-5 h-5" />
+        <div className="bg-white border border-journal-border rounded-xl sm:rounded-2xl p-5 sm:p-8 shadow-xs">
+          <div className="text-center mb-6">
+            <div className="w-11 h-11 bg-journal-accent-light text-journal-accent rounded-full flex items-center justify-center mx-auto mb-3">
+              <Lock className="w-4 h-4" />
             </div>
-            <h1 className="font-journal-serif text-3xl font-bold tracking-tight text-journal-text mb-2 text-balance">
+            <h1 className="font-journal-serif text-2xl sm:text-3xl font-bold tracking-tight text-journal-text mb-1.5 text-balance">
               Welcome back, Nithh
             </h1>
             <p className="text-xs sm:text-sm text-journal-muted leading-relaxed italic font-journal-serif">
-              Dear Me — for me, by me.
+              Private Owner Access
             </p>
           </div>
 
           {state?.error && (
             <div
               role="alert"
-              className="mb-6 p-3.5 bg-red-50/80 border border-red-200 text-red-900 text-xs rounded-xl flex items-start gap-2.5"
+              className="mb-5 p-3 bg-red-50/80 border border-red-200 text-red-900 text-xs rounded-xl flex items-start gap-2.5"
             >
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
               <span className="leading-relaxed">{state.error}</span>
             </div>
           )}
 
-          <form action={formAction} className="space-y-5">
+          <form action={formAction} className="space-y-4">
             <div>
               <label
                 htmlFor="email"
-                className="block text-xs font-semibold tracking-wider uppercase text-journal-muted mb-1.5"
+                className="block text-[11px] font-semibold tracking-wider uppercase text-journal-muted mb-1.5"
               >
                 Owner Email
               </label>
@@ -75,7 +75,7 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-xs font-semibold tracking-wider uppercase text-journal-muted mb-1.5"
+                className="block text-[11px] font-semibold tracking-wider uppercase text-journal-muted mb-1.5"
               >
                 Password
               </label>
@@ -94,7 +94,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full mt-2 inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg text-white bg-journal-accent hover:bg-journal-accent-hover transition-colors shadow-xs disabled:opacity-60 cursor-pointer"
+              className="w-full mt-2 inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg text-white bg-journal-accent hover:bg-journal-accent-hover transition-colors shadow-xs disabled:opacity-60 cursor-pointer min-h-[42px]"
             >
               {isPending ? (
                 <>
@@ -110,9 +110,9 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-journal-border text-center">
+          <div className="mt-6 pt-5 border-t border-journal-border text-center">
             <p className="text-xs text-journal-muted italic font-journal-serif">
-              Dear Me • for me, by me
+              Dear Me • Private Journal
             </p>
           </div>
         </div>

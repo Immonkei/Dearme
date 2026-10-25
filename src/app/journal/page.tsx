@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getEntries } from "@/lib/journal/repository";
 import { EntryCard } from "@/components/journal/EntryCard";
-import { Plus, BookOpen, Lock, Globe, Feather } from "lucide-react";
+import { Plus, BookOpen, Lock, Globe, Feather, Brain } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -34,17 +34,27 @@ export default async function JournalDashboard({ searchParams }: JournalPageProp
             Nithh&apos;s Journal
           </h1>
           <p className="text-sm text-journal-muted italic font-journal-serif">
-            Dear Me — for me, by me.
+            A quiet space for reflection and memories.
           </p>
         </div>
 
-        <Link
-          href="/journal/new"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold bg-journal-accent text-white hover:bg-journal-accent-hover transition-colors shadow-xs hover:shadow-sm self-start sm:self-auto cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Write for Today</span>
-        </Link>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Link
+            href="/journal/headspace"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-white text-journal-text border border-journal-border hover:bg-journal-tag transition-colors shadow-xs"
+          >
+            <Brain className="w-3.5 h-3.5 text-journal-accent" />
+            <span>Edit Headspace</span>
+          </Link>
+
+          <Link
+            href="/journal/new"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold bg-journal-accent text-white hover:bg-journal-accent-hover transition-colors shadow-xs hover:shadow-sm cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Write for Today</span>
+          </Link>
+        </div>
       </div>
 
       {/* Filter Tabs with embedded counts */}

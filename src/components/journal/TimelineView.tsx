@@ -31,7 +31,7 @@ export function TimelineView({ entries }: TimelineViewProps) {
           </div>
 
           {/* Timeline Spine & Nodes */}
-          <div className="relative pl-6 sm:pl-8 border-l-2 border-journal-border/80 space-y-8 ml-3">
+          <div className="relative pl-5 sm:pl-8 border-l-2 border-journal-border/80 space-y-5 sm:space-y-8 ml-2 sm:ml-3">
             {periodEntries.map((entry) => {
               const formattedDate = new Date(
                 entry.entry_date + "T00:00:00"
@@ -50,7 +50,7 @@ export function TimelineView({ entries }: TimelineViewProps) {
                 <div key={entry.id} className="relative group">
                   {/* Spine Node Dot */}
                   <div
-                    className={`absolute -left-[31px] sm:-left-[39px] top-5 w-3.5 h-3.5 rounded-full border-2 bg-white transition-all ${
+                    className={`absolute -left-[27px] sm:-left-[39px] top-5 w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full border-2 bg-white transition-all ${
                       isPublished
                         ? "border-emerald-600 group-hover:scale-125"
                         : "border-journal-accent group-hover:scale-125"
@@ -58,9 +58,9 @@ export function TimelineView({ entries }: TimelineViewProps) {
                   />
 
                   {/* Entry Card */}
-                  <div className="bg-white border border-journal-border hover:border-journal-accent/60 rounded-2xl p-6 shadow-xs hover:shadow-sm transition-all">
-                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5 text-xs text-journal-muted">
-                      <div className="flex items-center gap-2">
+                  <div className="bg-white border border-journal-border hover:border-journal-accent/60 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xs hover:shadow-sm transition-all">
+                    <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 mb-2 text-xs text-journal-muted">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
                         <span className="font-semibold text-journal-text tabular-nums">
                           {formattedDate}
                         </span>
@@ -69,16 +69,16 @@ export function TimelineView({ entries }: TimelineViewProps) {
                         )}
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
                         {entry.mood && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-journal-accent bg-journal-accent-light px-2.5 py-0.5 rounded-full capitalize">
+                          <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-medium text-journal-accent bg-journal-accent-light px-2 sm:px-2.5 py-0.5 rounded-full capitalize">
                             <Sparkles className="w-2.5 h-2.5" />
                             <span>{entry.mood}</span>
                           </span>
                         )}
 
                         <span
-                          className={`inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${
+                          className={`inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-medium px-2 sm:px-2.5 py-0.5 rounded-full border ${
                             isPublished
                               ? "bg-emerald-50 text-emerald-950 border-emerald-300"
                               : "bg-amber-50 text-amber-950 border-amber-300"
@@ -99,22 +99,22 @@ export function TimelineView({ entries }: TimelineViewProps) {
                       </div>
                     </div>
 
-                    <h3 className="font-journal-serif text-xl sm:text-2xl font-bold text-journal-text mb-2.5 group-hover:text-journal-accent transition-colors leading-snug text-balance">
+                    <h3 className="font-journal-serif text-lg sm:text-xl md:text-2xl font-bold text-journal-text mb-2 group-hover:text-journal-accent transition-colors leading-snug text-balance">
                       <Link href={`/journal/entries/${entry.id}`}>
                         {entry.title}
                       </Link>
                     </h3>
 
-                    <p className="text-sm text-journal-muted line-clamp-3 mb-5 leading-relaxed font-journal-sans">
+                    <p className="text-xs sm:text-sm text-journal-muted line-clamp-3 mb-4 leading-relaxed font-journal-sans">
                       {preview}
                     </p>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-journal-border/70 text-xs">
-                      <div className="flex flex-wrap gap-1.5">
+                    <div className="flex items-center justify-between pt-3 border-t border-journal-border/70 text-xs">
+                      <div className="flex flex-wrap gap-1">
                         {entry.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="bg-journal-bg text-journal-muted px-2 py-0.5 rounded-md"
+                            className="bg-journal-bg text-journal-muted px-1.5 sm:px-2 py-0.5 rounded-md text-[11px]"
                           >
                             #{tag}
                           </span>
@@ -123,7 +123,7 @@ export function TimelineView({ entries }: TimelineViewProps) {
 
                       <Link
                         href={`/journal/entries/${entry.id}`}
-                        className="inline-flex items-center gap-1 text-journal-accent font-semibold hover:text-journal-accent-hover transition-colors"
+                        className="inline-flex items-center gap-1 text-journal-accent font-semibold hover:text-journal-accent-hover transition-colors py-1"
                       >
                         <span>Open &rarr;</span>
                       </Link>

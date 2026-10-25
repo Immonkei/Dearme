@@ -1,11 +1,18 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Feather } from "lucide-react";
+import { Feather, Menu, X } from "lucide-react";
 
 export function PublicNav() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   const links = [
     { href: "/", label: "Home" },
@@ -26,7 +33,8 @@ export function PublicNav() {
           </span>
         </Link>
 
-        <nav className="flex items-center gap-6 text-sm">
+        {/* Desktop Navigation */}
+        <nav className="hidden sm:flex items-center gap-6 text-sm">
           {links.map((link) => {
             const isActive =
               link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
@@ -36,7 +44,7 @@ export function PublicNav() {
                 href={link.href}
                 className={`transition-colors font-medium py-1 ${
                   isActive
-                    ? "text-journal-text border-b-2 border-journal-accent"
+                    ? "text-journal-text border-b-2 border-journal-accent font-semibold"
                     : "text-journal-muted hover:text-journal-text"
                 }`}
               >
@@ -45,49 +53,58 @@ export function PublicNav() {
             );
           })}
         </nav>
+
+        {/* Mobile Menu Button */}
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="sm:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-journal-text bg-white border border-journal-border hover:bg-journal-tag transition-colors min-h-[36px] cursor-pointer"
+          aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={isOpen}
+        >
+          {isOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          <span>Menu</span>
+        </button>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {isOpen && (
+        <div className="sm:hidden border-t border-journal-border/80 bg-journal-bg/98 backdrop-blur-md px-4 py-3 shadow-sm animate-in fade-in slide-in-from-top-2 duration-150">
+          <nav className="flex flex-col space-y-1">
+            {links.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors min-h-[44px] ${
+                    isActive
+                      ? "bg-journal-accent text-white font-semibold shadow-xs"
+                      : "text-journal-text hover:bg-white/80 active:bg-white"
+                  }`}
+                >
+                  <span>{link.label}</span>
+                  {isActive && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
 
 export function PublicFooter() {
   return (
-    <footer className="mt-auto border-t border-journal-border/80 bg-journal-bg/60 py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-journal-muted">
-        <div>
-          <p className="font-journal-serif text-base font-semibold text-journal-text flex flex-wrap items-center gap-2">
-            <span>Dear Me</span>
-            <span className="text-journal-muted/50 font-normal" aria-hidden="true">•</span>
-            <span className="text-journal-muted font-normal italic font-journal-serif">for me, by me</span>
-          </p>
-          <p className="italic font-journal-serif text-journal-muted mt-1">
-            Written by Nithh. Letters to the person I am becoming.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="hover:text-journal-text transition-colors font-medium"
-          >
-            Home
-          </Link>
-          <span aria-hidden="true" className="text-journal-muted/40">•</span>
-          <Link
-            href="/entries"
-            className="hover:text-journal-text transition-colors font-medium"
-          >
-            Letters
-          </Link>
-          <span aria-hidden="true" className="text-journal-muted/40">•</span>
-          <Link
-            href="/about"
-            className="hover:text-journal-text transition-colors font-medium"
-          >
-            Why I Write
-          </Link>
-        </div>
-      </div>
+    <footer className="mt-auto border-t border-journal-border/70 py-6 text-center text-xs text-journal-muted">
+      <p className="font-journal-serif">Dear Me • Written by Nithh</p>
     </footer>
   );
 }

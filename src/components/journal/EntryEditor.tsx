@@ -467,7 +467,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
         <div className="lg:col-span-8 space-y-6">
           {isPreview ? (
             /* PREVIEW VIEW */
-            <div className="bg-white border border-journal-border rounded-2xl p-8 sm:p-12 shadow-xs">
+            <div className="bg-white border border-journal-border rounded-xl sm:rounded-2xl p-4 sm:p-8 md:p-12 shadow-xs">
               <div className="flex items-center gap-2 text-xs text-journal-muted mb-3">
                 <Calendar className="w-3.5 h-3.5 text-journal-accent" />
                 <time className="tabular-nums">{entryDate}</time>
@@ -703,14 +703,14 @@ export function EntryEditor({ entry }: EntryEditorProps) {
               </div>
 
               {/* Add Block Toolbar */}
-              <div className="flex flex-wrap items-center gap-2 p-3 bg-white border border-journal-border rounded-xl">
-                <span className="text-xs font-semibold text-journal-muted mr-1">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 p-2 sm:p-3 bg-white border border-journal-border rounded-xl">
+                <span className="text-[11px] sm:text-xs font-semibold text-journal-muted mr-0.5 sm:mr-1">
                   Insert:
                 </span>
                 <button
                   type="button"
                   onClick={() => addBlock("paragraph")}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-journal-text bg-journal-bg hover:bg-journal-tag rounded-lg transition-colors border border-journal-border/70"
+                  className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium text-journal-text bg-journal-bg hover:bg-journal-tag rounded-lg transition-colors border border-journal-border/70 min-h-[32px]"
                 >
                   <AlignLeft className="w-3.5 h-3.5" />
                   <span>Paragraph</span>
@@ -718,7 +718,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                 <button
                   type="button"
                   onClick={() => addBlock("heading-2")}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-journal-text bg-journal-bg hover:bg-journal-tag rounded-lg transition-colors border border-journal-border/70"
+                  className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium text-journal-text bg-journal-bg hover:bg-journal-tag rounded-lg transition-colors border border-journal-border/70 min-h-[32px]"
                 >
                   <Heading className="w-3.5 h-3.5" />
                   <span>Heading</span>
@@ -726,14 +726,14 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                 <button
                   type="button"
                   onClick={() => addBlock("blockquote")}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-journal-text bg-journal-bg hover:bg-journal-tag rounded-lg transition-colors border border-journal-border/70"
+                  className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium text-journal-text bg-journal-bg hover:bg-journal-tag rounded-lg transition-colors border border-journal-border/70 min-h-[32px]"
                 >
                   <Quote className="w-3.5 h-3.5" />
                   <span>Quote</span>
                 </button>
 
                 {/* Multiple Images Upload Button */}
-                <label className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-journal-accent bg-journal-accent-light hover:bg-journal-accent/20 rounded-lg transition-colors cursor-pointer border border-journal-accent/30">
+                <label className="inline-flex items-center gap-1 sm:gap-1.5 px-3 sm:px-3.5 py-1.5 text-xs font-semibold text-journal-accent bg-journal-accent-light hover:bg-journal-accent/20 rounded-lg transition-colors cursor-pointer border border-journal-accent/30 min-h-[32px]">
                   <ImageIcon className="w-3.5 h-3.5" />
                   <span>Add Images (Max 10)</span>
                   <input
@@ -751,8 +751,8 @@ export function EntryEditor({ entry }: EntryEditorProps) {
         </div>
 
         {/* Sidebar Metadata Column */}
-        <aside className="lg:col-span-4 space-y-6">
-          <div className="bg-white border border-journal-border rounded-2xl p-6 shadow-xs space-y-5">
+        <aside className="lg:col-span-4 space-y-5 sm:space-y-6">
+          <div className="bg-white border border-journal-border rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xs space-y-4 sm:space-y-5">
             <h3 className="font-journal-serif text-lg font-bold text-journal-text pb-2.5 border-b border-journal-border">
               Entry Details
             </h3>
