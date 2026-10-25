@@ -21,17 +21,21 @@ interface LocalStore {
 }
 
 function initLocalStore(): LocalStore {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-
-  if (fs.existsSync(DATA_FILE)) {
-    try {
-      const data = JSON.parse(fs.readFileSync(DATA_FILE, "utf-8"));
-      return data;
-    } catch {
-      // Fallback to initial seeds
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
     }
+
+    if (fs.existsSync(DATA_FILE)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(DATA_FILE, "utf-8"));
+        return data;
+      } catch {
+        // Fallback to initial seeds
+      }
+    }
+  } catch {
+    // Read-only filesystem on serverless environments like Vercel
   }
 
   const initialEntries: JournalEntry[] = [
@@ -183,7 +187,11 @@ function initLocalStore(): LocalStore {
     images: [],
   };
 
-  fs.writeFileSync(DATA_FILE, JSON.stringify(store, null, 2), "utf-8");
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(store, null, 2), "utf-8");
+  } catch {
+    // Read-only filesystem on serverless environments
+  }
   return store;
 }
 
@@ -192,15 +200,25 @@ function readLocalStore(): LocalStore {
 }
 
 function writeLocalStore(store: LocalStore) {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(DATA_FILE, JSON.stringify(store, null, 2), "utf-8");
+  } catch {
+    // Read-only filesystem on serverless environments
   }
-  fs.writeFileSync(DATA_FILE, JSON.stringify(store, null, 2), "utf-8");
 }
 
 function isSupabaseConfigured(): boolean {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  return Boolean(url && !url.includes("placeholder"));
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  return Boolean(
+    url &&
+    !url.includes("placeholder") &&
+    anonKey &&
+    !anonKey.includes("placeholder")
+  );
 }
 
 /**
