@@ -34,33 +34,33 @@ function initLocalStore(): LocalStore {
   const initialEntries: JournalEntry[] = [
     {
       id: "7d8f4321-1234-4567-89ab-cdef01234567",
-      title: "First Steps into Dear Me",
-      slug: "first-steps-into-dear-me",
+      title: "Learning to be patient with who I am",
+      slug: "learning-to-be-patient-with-who-i-am",
       entry_date: new Date().toISOString().split("T")[0],
-      category: "Letters",
-      tags: ["Beginnings", "Reflections"],
+      category: "Lessons",
+      tags: ["Growth", "Mindset", "Evening"],
       mood: "reflective",
       status: "published",
       published_at: new Date().toISOString(),
       excerpt:
-        "Every story deserves a sanctuary. Here begins the quiet place for memories, lessons, and the slow art of becoming.",
+        "I have spent so much time rushing toward some future version of myself that I forgot the person living through today deserves some gentleness too.",
       content: {
         version: 1,
         blocks: [
           {
             id: "b1",
             type: "paragraph",
-            text: "Today I began Dear Me. For a long time, I wanted a quiet room on the web — not a stage for applause, not a gallery curated for the gaze of strangers, but a real journal.",
+            text: "I caught myself feeling frustrated this evening because things aren't moving as fast as I planned in my head. I have this stubborn habit of treating my days like a checklist where taking a break feels like falling behind.",
           },
           {
             id: "b2",
             type: "blockquote",
-            text: "Your life, your memories, your words — you decide what the world gets to see.",
+            text: "I don't have to have everything figured out by tonight. Staying alive, trying my best, and being kind to myself is enough for one day.",
           },
           {
             id: "b3",
             type: "paragraph",
-            text: "Most of what I record here will stay quiet and private. But whenever a lesson feels tender enough to share, or a memory asks for the open sky, I will turn the lock and let it into the light.",
+            text: "I took a long walk as the sun dipped behind the rooftops. The air was cool and crisp against my face. Looking at the evening sky, I realized: growth isn't a straight line. The version of me from two years ago would be proud of where I am standing right now, even if I still feel unsure most days. I need to remember to breathe.",
           },
         ],
       },
@@ -70,27 +70,32 @@ function initLocalStore(): LocalStore {
     },
     {
       id: "8e9f5432-2345-5678-90bc-def012345678",
-      title: "Morning Rain and Warm Coffee",
-      slug: "morning-rain-and-warm-coffee",
+      title: "A quiet Sunday morning and cold hands",
+      slug: "a-quiet-sunday-morning-and-cold-hands",
       entry_date: new Date(Date.now() - 86400000).toISOString().split("T")[0],
       category: "Daily Life",
-      tags: ["Morning", "Peace"],
+      tags: ["Morning", "Solitude", "Tea"],
       mood: "peaceful",
       status: "private",
       published_at: null,
-      excerpt: "The sound of rain against the window pane and the steam rising from the ceramic mug.",
+      excerpt: "Made tea before anyone else woke up. Ten unbroken minutes of sitting with my thoughts and listening to the breeze.",
       content: {
         version: 1,
         blocks: [
           {
             id: "p1",
             type: "paragraph",
-            text: "Woke up to the gentle patter of rain against the roof. The air carries that deep, earthy scent of wet soil and cold morning.",
+            text: "Woke up earlier than usual today. The house was completely silent, except for the gentle hum of the refrigerator and the wind rustling dry leaves outside my bedroom window.",
           },
           {
             id: "p2",
             type: "paragraph",
-            text: "Poured a dark roast coffee and sat by the windowsill. No rush, no urgent notifications, just ten unbroken minutes of breathing in the dawn.",
+            text: "Poured a hot cup of tea and wrapped both hands around the ceramic mug to warm my fingers. Didn't open my phone. Didn't look at emails. Just watched the morning light slowly stretch across the floorboards.",
+          },
+          {
+            id: "p3",
+            type: "paragraph",
+            text: "These are the moments I usually rush past. When the upcoming week feels heavy, I want to hold on to this exact feeling: that quietness isn't something I have to earn; it's something I just have to give myself permission to feel.",
           },
         ],
       },

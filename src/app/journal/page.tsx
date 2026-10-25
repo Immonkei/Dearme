@@ -31,7 +31,7 @@ export default async function JournalDashboard({ searchParams }: JournalPageProp
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-journal-border">
         <div>
           <h1 className="font-journal-serif text-3xl sm:text-4xl font-bold tracking-tight text-journal-text mb-1.5">
-            Your Journal
+            My Journal
           </h1>
           <p className="text-sm text-journal-muted italic font-journal-serif">
             Letters to the person I am becoming.
@@ -43,7 +43,7 @@ export default async function JournalDashboard({ searchParams }: JournalPageProp
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold bg-journal-accent text-white hover:bg-journal-accent-hover transition-colors shadow-xs hover:shadow-sm self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>Write Reflection</span>
+          <span>Write for Today</span>
         </Link>
       </div>
 
@@ -58,7 +58,7 @@ export default async function JournalDashboard({ searchParams }: JournalPageProp
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
-          <span>All Entries</span>
+          <span>All Pages</span>
           <span className="tabular-nums px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
             {totalCount}
           </span>
@@ -73,7 +73,7 @@ export default async function JournalDashboard({ searchParams }: JournalPageProp
           }`}
         >
           <Lock className="w-3.5 h-3.5" />
-          <span>Private Sanctuary</span>
+          <span>Private to Me</span>
           <span className="tabular-nums px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
             {privateCount}
           </span>
@@ -88,7 +88,7 @@ export default async function JournalDashboard({ searchParams }: JournalPageProp
           }`}
         >
           <Globe className="w-3.5 h-3.5" />
-          <span>Shared with the World</span>
+          <span>Shared Publicly</span>
           <span className="tabular-nums px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
             {publishedCount}
           </span>

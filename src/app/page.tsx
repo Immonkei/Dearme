@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { getEntries } from "@/lib/journal/repository";
 import { PublicNav, PublicFooter } from "@/components/public/PublicNav";
-import { Calendar, ArrowRight, BookOpen, Clock } from "lucide-react";
+import { Calendar, ArrowRight, Clock } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const publishedEntries = await getEntries({ sort: "date_desc" }, true);
@@ -22,22 +24,22 @@ export default async function HomePage() {
         </p>
 
         <p className="text-sm sm:text-base text-journal-muted max-w-lg mx-auto leading-relaxed mb-10 font-journal-sans">
-          A quiet, personal sanctuary of reflections, lessons, and milestones. Every entry begins private; only selected letters are illuminated for the world.
+          A personal corner for my thoughts, quiet mornings, and the lessons I am learning as I grow. Most of what I write is private; only these few reflections are shared with the open world.
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-3.5">
           <Link
             href="/entries"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium bg-journal-accent text-white hover:bg-journal-accent-hover transition-colors shadow-xs hover:shadow-sm"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-journal-accent text-white hover:bg-journal-accent-hover transition-colors shadow-xs hover:shadow-sm"
           >
-            <span>Read Published Letters</span>
+            <span>Read My Letters</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/about"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium bg-white text-journal-text border border-journal-border hover:bg-journal-tag transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-white text-journal-text border border-journal-border hover:bg-journal-tag transition-colors"
           >
-            <span>About Dear Me</span>
+            <span>Why I Write</span>
           </Link>
         </div>
       </section>
@@ -46,20 +48,20 @@ export default async function HomePage() {
       <section className="max-w-3xl mx-auto px-4 sm:px-6 py-12 flex-1 w-full">
         <div className="flex items-center justify-between pb-4 border-b border-journal-border mb-8">
           <h2 className="font-journal-serif text-2xl font-bold text-journal-text">
-            Recent Letters
+            Letters from My Days
           </h2>
           <Link
             href="/entries"
             className="text-xs font-semibold text-journal-accent hover:text-journal-accent-hover flex items-center gap-1.5 transition-colors"
           >
-            <span>View all archive</span>
+            <span>Browse all letters</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
         {featured.length === 0 ? (
-          <div className="bg-white border border-journal-border rounded-2xl p-12 text-center text-sm text-journal-muted italic">
-            No public letters have been shared yet.
+          <div className="bg-white border border-journal-border rounded-2xl p-12 text-center text-sm text-journal-muted italic font-journal-serif">
+            I haven&apos;t shared any public reflections yet.
           </div>
         ) : (
           <div className="divide-y divide-journal-border/80">
@@ -77,7 +79,6 @@ export default async function HomePage() {
                 entry.content.blocks.find((b) => "text" in b)?.text ||
                 "";
 
-              // Approximate word count and read time
               const wordCount = entry.content.blocks.reduce((acc, b) => {
                 return acc + ("text" in b ? b.text.split(/\s+/).length : 0);
               }, 0);
@@ -121,7 +122,7 @@ export default async function HomePage() {
                     href={`/entries/${entry.slug}`}
                     className="inline-flex items-center text-xs font-semibold text-journal-accent hover:text-journal-accent-hover gap-1.5 transition-colors"
                   >
-                    <span>Read reflection</span>
+                    <span>Read letter</span>
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </article>

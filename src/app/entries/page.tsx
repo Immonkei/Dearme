@@ -29,10 +29,10 @@ export default async function PublicArchivePage({ searchParams }: EntriesPagePro
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-16 flex-1 w-full">
         <header className="mb-10 pb-6 border-b border-journal-border">
           <h1 className="font-journal-serif text-3xl sm:text-5xl font-bold tracking-tight text-journal-text mb-3">
-            Published Archive
+            Letters I&apos;ve Shared
           </h1>
           <p className="text-sm sm:text-base text-journal-muted font-journal-serif italic">
-            A quiet collection of reflections, memories, and lessons shared with the world.
+            A quiet collection of reflections, memories, and lessons I felt ready to leave out in the open.
           </p>
 
           {/* Category Filter Pills */}

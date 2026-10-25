@@ -24,7 +24,7 @@ export default function LoginPage() {
             className="inline-flex items-center text-xs font-semibold text-journal-muted hover:text-journal-text transition-colors gap-2 group"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            <span>Return to Public Journal</span>
+            <span>Back to Home</span>
           </Link>
         </div>
 
@@ -35,10 +35,10 @@ export default function LoginPage() {
               <Lock className="w-5 h-5" />
             </div>
             <h1 className="font-journal-serif text-3xl font-bold tracking-tight text-journal-text mb-2 text-balance">
-              Owner Sign In
+              Private Journal
             </h1>
             <p className="text-xs sm:text-sm text-journal-muted leading-relaxed">
-              Dear Me is a private journal workspace. Access is restricted exclusively to the journal owner.
+              Sign in to write and reflect in your personal space.
             </p>
           </div>
 
@@ -58,7 +58,7 @@ export default function LoginPage() {
                 htmlFor="email"
                 className="block text-xs font-semibold tracking-wider uppercase text-journal-muted mb-1.5"
               >
-                Owner Email
+                Email
               </label>
               <input
                 id="email"

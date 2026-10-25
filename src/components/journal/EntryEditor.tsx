@@ -528,7 +528,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Title of this reflection..."
+                placeholder="What's on your mind today?"
                 className="w-full font-journal-serif text-3xl sm:text-4xl font-bold text-journal-text bg-transparent border-0 border-b border-journal-border focus:border-journal-accent focus:outline-none pb-3 transition-colors placeholder:text-journal-muted/50"
               />
 
@@ -599,7 +599,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                           onChange={(e) =>
                             updateBlockText(block.id, e.target.value)
                           }
-                          placeholder="Write your thoughts..."
+                          placeholder="Write freely. How was today? What are you feeling right now? Nobody is judging..."
                           className="w-full bg-transparent border-0 focus:outline-none resize-y text-base font-journal-serif text-journal-text leading-relaxed placeholder:text-journal-muted/50"
                         />
                       )}
@@ -611,7 +611,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                           onChange={(e) =>
                             updateBlockText(block.id, e.target.value)
                           }
-                          placeholder="Section heading..."
+                          placeholder="A section or theme from today..."
                           className="w-full bg-transparent border-0 focus:outline-none text-xl font-journal-serif font-semibold text-journal-text"
                         />
                       )}
@@ -636,7 +636,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                             onChange={(e) =>
                               updateBlockText(block.id, e.target.value)
                             }
-                            placeholder="A quiet sentence or quotation to remember..."
+                            placeholder="A sentence or realization you want to hold onto..."
                             className="w-full bg-transparent border-0 focus:outline-none italic text-base font-journal-serif text-journal-text leading-relaxed"
                           />
                         </div>
@@ -839,7 +839,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                 rows={3}
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
-                placeholder="Brief reflection summary for archives..."
+                placeholder="A brief note or takeaway to remember this day by..."
                 className="w-full px-3 py-2 text-sm bg-journal-bg border border-journal-border rounded-lg focus:outline-none focus:ring-1 focus:ring-journal-accent resize-none leading-relaxed"
               />
             </div>

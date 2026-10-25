@@ -9,8 +9,8 @@ export function PublicNav() {
 
   const links = [
     { href: "/", label: "Home" },
-    { href: "/entries", label: "Archive" },
-    { href: "/about", label: "About" },
+    { href: "/entries", label: "Letters" },
+    { href: "/about", label: "Why I Write" },
   ];
 
   return (
@@ -52,27 +52,29 @@ export function PublicFooter() {
     <footer className="mt-auto border-t border-journal-border/80 bg-journal-bg/60 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-journal-muted">
         <div>
-          <p className="font-journal-serif text-base font-semibold text-journal-text">
-            Dear Me
+          <p className="font-journal-serif text-base font-semibold text-journal-text flex flex-wrap items-center gap-2">
+            <span>Dear Me</span>
+            <span className="text-journal-muted/50 font-normal" aria-hidden="true">•</span>
+            <span className="text-journal-muted font-normal italic font-journal-serif">for me, by Nithh</span>
           </p>
-          <p className="italic font-journal-serif text-journal-muted mt-0.5">
+          <p className="italic font-journal-serif text-journal-muted mt-1">
             Letters to the person I am becoming.
           </p>
         </div>
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-6">
           <Link
             href="/about"
-            className="hover:text-journal-text transition-colors"
+            className="hover:text-journal-text transition-colors font-medium"
           >
-            About
+            Why I Write
           </Link>
-          <span aria-hidden="true">•</span>
+          <span aria-hidden="true" className="text-journal-muted/50">•</span>
           <Link
             href="/entries"
-            className="hover:text-journal-text transition-colors"
+            className="hover:text-journal-text transition-colors font-medium"
           >
-            Archive
+            Letters
           </Link>
         </div>
       </div>
