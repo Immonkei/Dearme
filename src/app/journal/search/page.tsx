@@ -1,7 +1,6 @@
 import { getEntries } from "@/lib/journal/repository";
 import { EntryCard } from "@/components/journal/EntryCard";
 import { SearchFilterBar } from "@/components/journal/SearchFilterBar";
-import { Search } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -29,12 +28,12 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   );
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
       <div className="mb-8">
-        <h1 className="font-journal-serif text-3xl font-bold tracking-tight text-journal-text mb-1">
+        <h1 className="font-journal-serif text-3xl sm:text-4xl font-bold tracking-tight text-journal-text mb-2 text-balance">
           Search & Filter
         </h1>
-        <p className="text-sm text-journal-muted">
+        <p className="text-sm sm:text-base text-journal-muted font-journal-serif italic">
           Find entries across dates, themes, feelings, and reflections.
         </p>
       </div>
@@ -48,13 +47,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <h2 className="font-journal-serif text-xl font-semibold text-journal-text">
               Results
             </h2>
-            <span className="text-xs text-journal-muted">
+            <span className="text-xs text-journal-muted tabular-nums">
               {entries.length} {entries.length === 1 ? "entry" : "entries"} found
             </span>
           </div>
 
           {entries.length === 0 ? (
-            <div className="bg-white border border-dashed border-journal-border rounded-2xl p-12 text-center text-sm text-journal-muted">
+            <div className="bg-white border border-dashed border-journal-border rounded-2xl p-14 text-center text-sm text-journal-muted font-journal-serif italic">
               No journal entries match your search criteria.
             </div>
           ) : (

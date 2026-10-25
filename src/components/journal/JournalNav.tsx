@@ -38,9 +38,9 @@ export function JournalNav() {
               Dear Me
             </span>
           </Link>
-          <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium tracking-wide text-journal-muted bg-journal-tag px-2 py-0.5 rounded-full border border-journal-border">
+          <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-journal-muted bg-journal-tag px-2.5 py-0.5 rounded-full border border-journal-border">
             <Lock className="w-3 h-3 text-journal-accent" />
-            Private Workspace
+            <span>Private Workspace</span>
           </span>
         </div>
 
@@ -58,9 +58,9 @@ export function JournalNav() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium bg-journal-accent text-white hover:bg-journal-accent-hover transition-colors shadow-xs ml-1 mr-2"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-journal-accent text-white hover:bg-journal-accent-hover transition-colors shadow-xs ml-1 mr-2"
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-3.5 h-3.5" />
                   <span>{link.label}</span>
                 </Link>
               );
@@ -70,13 +70,13 @@ export function JournalNav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium transition-colors ${
                   isActive
                     ? "text-journal-text bg-white shadow-xs font-semibold"
                     : "text-journal-muted hover:text-journal-text hover:bg-white/60"
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-3.5 h-3.5" />
                 <span>{link.label}</span>
               </Link>
             );
@@ -89,7 +89,7 @@ export function JournalNav() {
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-journal-muted hover:text-journal-text transition-colors"
+            className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-journal-muted hover:text-journal-text transition-colors"
             title="View public journal site"
           >
             <span>Public Site</span>
@@ -99,7 +99,7 @@ export function JournalNav() {
           <form action={signOut}>
             <button
               type="submit"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-journal-muted hover:text-red-700 hover:bg-red-50 rounded-md transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-journal-muted hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
               title="Sign out of journal workspace"
             >
               <LogOut className="w-3.5 h-3.5" />
@@ -110,7 +110,7 @@ export function JournalNav() {
       </div>
 
       {/* Mobile nav bar */}
-      <div className="md:hidden flex items-center justify-around border-t border-journal-border/60 py-2 bg-journal-bg">
+      <div className="md:hidden flex items-center justify-around border-t border-journal-border/70 py-2.5 bg-journal-bg">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive =
@@ -122,7 +122,7 @@ export function JournalNav() {
             <Link
               key={link.href}
               href={link.href}
-              className={`flex flex-col items-center gap-0.5 text-xs py-1 px-2 rounded-md ${
+              className={`flex flex-col items-center gap-1 text-[11px] py-1.5 px-3 rounded-lg min-h-11 justify-center ${
                 isActive
                   ? "text-journal-accent font-semibold"
                   : "text-journal-muted"

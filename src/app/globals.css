@@ -3,20 +3,46 @@
 @theme {
   --color-journal-bg: #FAF7F0;
   --color-journal-surface: #FFFFFF;
-  --color-journal-text: #343B33;
-  --color-journal-muted: #73766C;
-  --color-journal-accent: #7C8B72;
-  --color-journal-accent-hover: #67755E;
-  --color-journal-accent-light: #EEF2EB;
-  --color-journal-border: #E4E0D6;
-  --color-journal-tag: #F0EDE4;
+  --color-journal-text: #2B322A;
+  --color-journal-muted: #5C6258;
+  --color-journal-accent: #5D7052;
+  --color-journal-accent-hover: #4A5A41;
+  --color-journal-accent-light: #E8EFE5;
+  --color-journal-border: #E3DFD5;
+  --color-journal-tag: #F2EFE8;
   --font-serif: var(--font-serif), Georgia, Cambria, "Times New Roman", serif;
   --font-sans: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
   --background: #FAF7F0;
-  --foreground: #343B33;
+  --foreground: #2B322A;
+  caret-color: #5D7052;
+}
+
+/* Browser surface defaults polished to match palette */
+::selection {
+  background-color: rgba(93, 112, 82, 0.22);
+  color: #2B322A;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF7F0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D8D3C7;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C4BEB0;
 }
 
 body {
@@ -27,9 +53,11 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Custom paper & reading styles */
+/* Typography styles */
 .font-journal-serif {
   font-family: var(--font-serif);
 }
@@ -38,48 +66,64 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Prose formatting for entries */
+/* Focus visibility ring */
+:focus-visible {
+  outline: 2px solid #5D7052;
+  outline-offset: 2px;
+}
+
+/* Balanced text */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Prose formatting for reader and preview */
 .journal-prose {
   font-family: var(--font-serif);
-  color: #343B33;
-  line-height: 1.8;
+  color: #2B322A;
+  line-height: 1.85;
   font-size: 1.125rem;
+  max-width: 68ch;
 }
 
 .journal-prose p {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .journal-prose h2 {
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   font-weight: 600;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
   margin-bottom: 1rem;
+  color: #2B322A;
+  text-wrap: balance;
 }
 
 .journal-prose h3 {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   font-weight: 600;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   margin-bottom: 0.75rem;
+  color: #2B322A;
+  text-wrap: balance;
 }
 
 .journal-prose blockquote {
-  border-left: 3px solid #7C8B72;
-  padding-left: 1.25rem;
-  margin: 1.5rem 0;
+  border-left: 2px solid #5D7052;
+  padding-left: 1.5rem;
+  margin: 2rem 0;
   font-style: italic;
-  color: #555A51;
+  color: #4B5248;
 }
 
 .journal-prose ul {
   list-style-type: disc;
   padding-left: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .journal-prose ol {
   list-style-type: decimal;
   padding-left: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }

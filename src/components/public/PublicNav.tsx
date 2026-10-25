@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Sparkles, Feather } from "lucide-react";
+import { Feather, Lock } from "lucide-react";
 
 export function PublicNav() {
   const pathname = usePathname();
@@ -16,8 +16,8 @@ export function PublicNav() {
   return (
     <header className="sticky top-0 z-40 bg-journal-bg/95 backdrop-blur-md border-b border-journal-border">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <Feather className="w-5 h-5 text-journal-accent transition-transform group-hover:-rotate-6" />
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <Feather className="w-5 h-5 text-journal-accent transition-transform duration-300 group-hover:-rotate-12" />
           <span className="font-journal-serif text-2xl font-bold tracking-tight text-journal-text group-hover:text-journal-accent transition-colors">
             Dear Me
           </span>
@@ -31,9 +31,9 @@ export function PublicNav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`transition-colors font-medium ${
+                className={`transition-colors font-medium py-1 ${
                   isActive
-                    ? "text-journal-text border-b-2 border-journal-accent pb-1"
+                    ? "text-journal-text border-b-2 border-journal-accent"
                     : "text-journal-muted hover:text-journal-text"
                 }`}
               >
@@ -49,35 +49,38 @@ export function PublicNav() {
 
 export function PublicFooter() {
   return (
-    <footer className="mt-auto border-t border-journal-border/80 bg-journal-bg/60 py-10">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-journal-muted">
+    <footer className="mt-auto border-t border-journal-border/80 bg-journal-bg/60 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-journal-muted">
         <div>
-          <p className="font-journal-serif text-sm font-medium text-journal-text">
+          <p className="font-journal-serif text-base font-semibold text-journal-text">
             Dear Me
           </p>
-          <p className="italic">Letters to the person I am becoming.</p>
+          <p className="italic font-journal-serif text-journal-muted mt-0.5">
+            Letters to the person I am becoming.
+          </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           <Link
             href="/about"
             className="hover:text-journal-text transition-colors"
           >
             About
           </Link>
-          <span>•</span>
+          <span aria-hidden="true">•</span>
           <Link
             href="/entries"
             className="hover:text-journal-text transition-colors"
           >
             Archive
           </Link>
-          <span>•</span>
+          <span aria-hidden="true">•</span>
           <Link
             href="/login"
-            className="text-journal-muted/70 hover:text-journal-text transition-colors"
+            className="inline-flex items-center gap-1 text-journal-muted hover:text-journal-text transition-colors"
           >
-            Owner Access
+            <Lock className="w-3 h-3 text-journal-accent" />
+            <span>Owner Sign In</span>
           </Link>
         </div>
       </div>

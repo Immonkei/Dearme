@@ -22,7 +22,6 @@ import {
   Globe,
   Lock,
   Trash2,
-  Plus,
   Image as ImageIcon,
   Heading,
   Quote,
@@ -33,24 +32,31 @@ import {
   Eye,
   Edit3,
   Calendar,
-  Sparkles,
-  Tag,
   AlertCircle,
   CheckCircle2,
-  Layers,
+  Leaf,
+  Sparkles,
+  Sun,
+  CloudRain,
+  Heart,
+  Compass,
 } from "lucide-react";
 
 interface EntryEditorProps {
   entry?: JournalEntry | null;
 }
 
-const AVAILABLE_MOODS: { label: string; value: MoodType; emoji: string }[] = [
-  { label: "Peaceful", value: "peaceful", emoji: "🌿" },
-  { label: "Reflective", value: "reflective", emoji: "💭" },
-  { label: "Joyful", value: "joyful", emoji: "☀️" },
-  { label: "Melancholy", value: "melancholy", emoji: "🌧️" },
-  { label: "Grateful", value: "grateful", emoji: "🙏" },
-  { label: "Contemplative", value: "contemplative", emoji: "🕯️" },
+const AVAILABLE_MOODS: {
+  label: string;
+  value: MoodType;
+  icon: typeof Leaf;
+}[] = [
+  { label: "Peaceful", value: "peaceful", icon: Leaf },
+  { label: "Reflective", value: "reflective", icon: Sparkles },
+  { label: "Joyful", value: "joyful", icon: Sun },
+  { label: "Melancholy", value: "melancholy", icon: CloudRain },
+  { label: "Grateful", value: "grateful", icon: Heart },
+  { label: "Contemplative", value: "contemplative", icon: Compass },
 ];
 
 export function EntryEditor({ entry }: EntryEditorProps) {
@@ -137,7 +143,6 @@ export function EntryEditor({ entry }: EntryEditorProps) {
 
   const removeBlock = (id: string) => {
     if (blocks.length <= 1) {
-      // Keep at least one empty block
       setBlocks([{ id: crypto.randomUUID(), type: "paragraph", text: "" }]);
       return;
     }
@@ -181,10 +186,8 @@ export function EntryEditor({ entry }: EntryEditorProps) {
       );
 
       try {
-        // Strip EXIF / GPS coordinates client-side
         const processed = await processAndStripExif(file);
 
-        // Upload to server action
         const formData = new FormData();
         const processedFile = new File([processed.blob], file.name, {
           type: processed.blob.type,
@@ -212,7 +215,6 @@ export function EntryEditor({ entry }: EntryEditorProps) {
             previewUrl: processed.dataUrl,
           });
 
-          // Set as cover image if none chosen yet
           if (!coverImageId) {
             setCoverImageId(res.image.id);
           }
@@ -340,23 +342,25 @@ export function EntryEditor({ entry }: EntryEditorProps) {
       {toastMessage && (
         <div
           role="status"
+          aria-live="polite"
           className={`mb-6 p-4 rounded-xl border flex items-center justify-between shadow-xs transition-all ${
             toastMessage.type === "success"
-              ? "bg-emerald-50 border-emerald-200 text-emerald-900"
-              : "bg-red-50 border-red-200 text-red-900"
+              ? "bg-emerald-50/90 border-emerald-300 text-emerald-950"
+              : "bg-red-50/90 border-red-300 text-red-950"
           }`}
         >
-          <div className="flex items-center gap-2.5 text-sm font-medium">
+          <div className="flex items-center gap-2.5 text-xs sm:text-sm font-medium">
             {toastMessage.type === "success" ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
             ) : (
-              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+              <AlertCircle className="w-4 h-4 text-red-700 shrink-0" />
             )}
             <span>{toastMessage.text}</span>
           </div>
           <button
             onClick={() => setToastMessage(null)}
-            className="text-gray-500 hover:text-gray-800"
+            className="text-gray-500 hover:text-gray-800 p-1"
+            aria-label="Dismiss alert"
           >
             <X className="w-4 h-4" />
           </button>
@@ -367,21 +371,21 @@ export function EntryEditor({ entry }: EntryEditorProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-journal-border mb-8">
         <div className="flex items-center gap-3">
           <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
               status === "published"
-                ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                : "bg-amber-50 text-amber-900 border-amber-200"
+                ? "bg-emerald-50 text-emerald-900 border-emerald-300"
+                : "bg-amber-50 text-amber-950 border-amber-300"
             }`}
           >
             {status === "published" ? (
               <>
-                <Globe className="w-3.5 h-3.5" />
-                Published Entry
+                <Globe className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Published Entry</span>
               </>
             ) : (
               <>
-                <Lock className="w-3.5 h-3.5" />
-                Private Draft
+                <Lock className="w-3.5 h-3.5 text-amber-800" />
+                <span>Private Draft</span>
               </>
             )}
           </span>
@@ -389,17 +393,17 @@ export function EntryEditor({ entry }: EntryEditorProps) {
           <button
             type="button"
             onClick={() => setIsPreview(!isPreview)}
-            className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-journal-muted hover:text-journal-text bg-white border border-journal-border rounded-full hover:bg-journal-tag transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-journal-muted hover:text-journal-text bg-white border border-journal-border rounded-full hover:bg-journal-tag transition-colors"
           >
             {isPreview ? (
               <>
                 <Edit3 className="w-3.5 h-3.5" />
-                Edit Mode
+                <span>Edit Mode</span>
               </>
             ) : (
               <>
                 <Eye className="w-3.5 h-3.5" />
-                Preview Mode
+                <span>Preview Mode</span>
               </>
             )}
           </button>
@@ -412,7 +416,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
               type="button"
               onClick={handleDelete}
               disabled={isPending}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-50 border border-red-200 rounded-lg transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-800 hover:bg-red-50 border border-red-200 rounded-lg transition-colors cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Delete</span>
@@ -424,7 +428,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
               type="button"
               onClick={handleUnpublish}
               disabled={isPending}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg transition-colors cursor-pointer"
             >
               <Lock className="w-3.5 h-3.5" />
               <span>Make Private (Unpublish)</span>
@@ -434,9 +438,9 @@ export function EntryEditor({ entry }: EntryEditorProps) {
               type="button"
               onClick={handlePublish}
               disabled={isPending}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-900 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors cursor-pointer"
             >
-              <Globe className="w-3.5 h-3.5" />
+              <Globe className="w-3.5 h-3.5 text-emerald-700" />
               <span>Publish Publicly</span>
             </button>
           )}
@@ -446,7 +450,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
             type="button"
             onClick={handleSavePrivately}
             disabled={isPending}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-medium text-white bg-journal-accent hover:bg-journal-accent-hover rounded-lg transition-colors shadow-xs cursor-pointer disabled:opacity-60"
+            className="inline-flex items-center gap-2 px-5 py-2 text-xs sm:text-sm font-semibold text-white bg-journal-accent hover:bg-journal-accent-hover rounded-lg transition-colors shadow-xs cursor-pointer disabled:opacity-60"
           >
             {isPending ? (
               <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -465,18 +469,18 @@ export function EntryEditor({ entry }: EntryEditorProps) {
             /* PREVIEW VIEW */
             <div className="bg-white border border-journal-border rounded-2xl p-8 sm:p-12 shadow-xs">
               <div className="flex items-center gap-2 text-xs text-journal-muted mb-3">
-                <Calendar className="w-3.5 h-3.5" />
-                <time>{entryDate}</time>
+                <Calendar className="w-3.5 h-3.5 text-journal-accent" />
+                <time className="tabular-nums">{entryDate}</time>
                 {category && <span>• {category}</span>}
                 {mood && <span>• {mood}</span>}
               </div>
 
-              <h1 className="font-journal-serif text-3xl sm:text-4xl font-bold text-journal-text mb-6">
+              <h1 className="font-journal-serif text-3xl sm:text-4xl font-bold text-journal-text mb-6 text-balance">
                 {title || "Untitled Entry"}
               </h1>
 
               {excerpt && (
-                <p className="text-base text-journal-muted italic mb-8 pb-6 border-b border-journal-border/60">
+                <p className="text-base text-journal-muted italic mb-8 pb-6 border-b border-journal-border/70 font-journal-serif">
                   {excerpt}
                 </p>
               )}
@@ -496,11 +500,13 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                     return (
                       <figure key={block.id} className="my-8">
                         {block.previewUrl && (
-                          <img
-                            src={block.previewUrl}
-                            alt={block.altText || "Journal photograph"}
-                            className="w-full rounded-xl object-cover max-h-[500px]"
-                          />
+                          <div className="overflow-hidden rounded-xl border border-journal-border">
+                            <img
+                              src={block.previewUrl}
+                              alt={block.altText || "Journal photograph"}
+                              className="w-full object-cover max-h-125"
+                            />
+                          </div>
                         )}
                         {block.caption && (
                           <figcaption className="text-center text-xs text-journal-muted mt-2.5 font-journal-sans italic">
@@ -523,20 +529,20 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Title of this reflection..."
-                className="w-full font-journal-serif text-3xl sm:text-4xl font-bold text-journal-text bg-transparent border-0 border-b border-journal-border focus:border-journal-accent focus:outline-none pb-3 transition-colors placeholder:text-journal-muted/60"
+                className="w-full font-journal-serif text-3xl sm:text-4xl font-bold text-journal-text bg-transparent border-0 border-b border-journal-border focus:border-journal-accent focus:outline-none pb-3 transition-colors placeholder:text-journal-muted/50"
               />
 
               {/* Upload Progress / Error Notice */}
               {uploadProgress && (
-                <div className="p-3 bg-journal-accent-light text-journal-accent text-xs rounded-lg flex items-center gap-2">
-                  <div className="w-3 h-3 border-2 border-journal-accent/40 border-t-journal-accent rounded-full animate-spin" />
+                <div className="p-3 bg-journal-accent-light text-journal-accent text-xs rounded-xl flex items-center gap-2">
+                  <div className="w-3.5 h-3.5 border-2 border-journal-accent/40 border-t-journal-accent rounded-full animate-spin" />
                   <span>{uploadProgress}</span>
                 </div>
               )}
 
               {uploadError && (
-                <div className="p-3 bg-red-50 text-red-800 text-xs rounded-lg flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                <div className="p-3 bg-red-50 text-red-900 text-xs rounded-xl flex items-center gap-2 border border-red-200">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-red-700" />
                   <span>{uploadError}</span>
                 </div>
               )}
@@ -547,15 +553,15 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                   return (
                     <div
                       key={block.id}
-                      className="group relative bg-white border border-journal-border hover:border-journal-accent/40 rounded-xl p-4 transition-all"
+                      className="group relative bg-white border border-journal-border hover:border-journal-accent/50 rounded-xl p-4 transition-all"
                     >
                       {/* Block Controls Header */}
                       <div className="flex items-center justify-between text-xs text-journal-muted mb-2">
-                        <span className="font-medium uppercase tracking-wider text-[10px]">
+                        <span className="font-semibold uppercase tracking-wider text-[10px]">
                           {block.type.replace("-", " ")}
                         </span>
 
-                        <div className="flex items-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1 opacity-50 group-hover:opacity-100 transition-opacity">
                           <button
                             type="button"
                             onClick={() => moveBlock(index, "up")}
@@ -623,7 +629,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                       )}
 
                       {block.type === "blockquote" && (
-                        <div className="border-l-3 border-journal-accent pl-3">
+                        <div className="border-l-2 border-journal-accent pl-3">
                           <textarea
                             rows={2}
                             value={block.text}
@@ -639,11 +645,13 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                       {block.type === "image" && (
                         <div className="space-y-3">
                           {block.previewUrl && (
-                            <img
-                              src={block.previewUrl}
-                              alt={block.altText || "Journal photograph"}
-                              className="w-full rounded-lg object-cover max-h-96"
-                            />
+                            <div className="overflow-hidden rounded-lg border border-journal-border">
+                              <img
+                                src={block.previewUrl}
+                                alt={block.altText || "Journal photograph"}
+                                className="w-full object-cover max-h-96"
+                              />
+                            </div>
                           )}
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -656,7 +664,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                                 })
                               }
                               placeholder="Add a photo caption..."
-                              className="px-2.5 py-1.5 bg-journal-bg border border-journal-border rounded-md focus:outline-none focus:border-journal-accent"
+                              className="px-3 py-1.5 bg-journal-bg border border-journal-border rounded-lg focus:outline-none focus:border-journal-accent"
                             />
                             <input
                               type="text"
@@ -667,11 +675,11 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                                 })
                               }
                               placeholder="Alt text (for accessibility)..."
-                              className="px-2.5 py-1.5 bg-journal-bg border border-journal-border rounded-md focus:outline-none focus:border-journal-accent"
+                              className="px-3 py-1.5 bg-journal-bg border border-journal-border rounded-lg focus:outline-none focus:border-journal-accent"
                             />
                           </div>
 
-                          <div className="flex items-center justify-between text-[11px] text-journal-muted">
+                          <div className="flex items-center justify-between text-[11px] text-journal-muted pt-1">
                             <button
                               type="button"
                               onClick={() => setCoverImageId(block.imageId)}
@@ -685,7 +693,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                                 ? "✓ Selected as Cover Image"
                                 : "Set as Cover Image"}
                             </button>
-                            <span>EXIF metadata stripped</span>
+                            <span className="text-journal-muted/80">EXIF metadata stripped</span>
                           </div>
                         </div>
                       )}
@@ -695,14 +703,14 @@ export function EntryEditor({ entry }: EntryEditorProps) {
               </div>
 
               {/* Add Block Toolbar */}
-              <div className="flex flex-wrap items-center gap-2 p-3 bg-white/80 border border-journal-border/80 rounded-xl">
-                <span className="text-xs font-medium text-journal-muted mr-1">
+              <div className="flex flex-wrap items-center gap-2 p-3 bg-white border border-journal-border rounded-xl">
+                <span className="text-xs font-semibold text-journal-muted mr-1">
                   Insert:
                 </span>
                 <button
                   type="button"
                   onClick={() => addBlock("paragraph")}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-journal-text bg-journal-bg hover:bg-journal-tag rounded-lg transition-colors border border-journal-border/60"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-journal-text bg-journal-bg hover:bg-journal-tag rounded-lg transition-colors border border-journal-border/70"
                 >
                   <AlignLeft className="w-3.5 h-3.5" />
                   <span>Paragraph</span>
@@ -710,7 +718,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                 <button
                   type="button"
                   onClick={() => addBlock("heading-2")}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-journal-text bg-journal-bg hover:bg-journal-tag rounded-lg transition-colors border border-journal-border/60"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-journal-text bg-journal-bg hover:bg-journal-tag rounded-lg transition-colors border border-journal-border/70"
                 >
                   <Heading className="w-3.5 h-3.5" />
                   <span>Heading</span>
@@ -718,14 +726,14 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                 <button
                   type="button"
                   onClick={() => addBlock("blockquote")}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-journal-text bg-journal-bg hover:bg-journal-tag rounded-lg transition-colors border border-journal-border/60"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-journal-text bg-journal-bg hover:bg-journal-tag rounded-lg transition-colors border border-journal-border/70"
                 >
                   <Quote className="w-3.5 h-3.5" />
                   <span>Quote</span>
                 </button>
 
                 {/* Multiple Images Upload Button */}
-                <label className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-journal-accent bg-journal-accent-light hover:bg-journal-accent/20 rounded-lg transition-colors cursor-pointer border border-journal-accent/30">
+                <label className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-journal-accent bg-journal-accent-light hover:bg-journal-accent/20 rounded-lg transition-colors cursor-pointer border border-journal-accent/30">
                   <ImageIcon className="w-3.5 h-3.5" />
                   <span>Add Images (Max 10)</span>
                   <input
@@ -745,7 +753,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
         {/* Sidebar Metadata Column */}
         <aside className="lg:col-span-4 space-y-6">
           <div className="bg-white border border-journal-border rounded-2xl p-6 shadow-xs space-y-5">
-            <h3 className="font-journal-serif text-lg font-semibold text-journal-text pb-2 border-b border-journal-border">
+            <h3 className="font-journal-serif text-lg font-bold text-journal-text pb-2.5 border-b border-journal-border">
               Entry Details
             </h3>
 
@@ -754,23 +762,22 @@ export function EntryEditor({ entry }: EntryEditorProps) {
               <label className="block text-xs font-semibold uppercase tracking-wider text-journal-muted mb-1.5">
                 Journal Date
               </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  value={entryDate}
-                  onChange={(e) => setEntryDate(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-journal-bg border border-journal-border rounded-lg focus:outline-none focus:ring-1 focus:ring-journal-accent"
-                />
-              </div>
+              <input
+                type="date"
+                value={entryDate}
+                onChange={(e) => setEntryDate(e.target.value)}
+                className="w-full px-3 py-2 text-sm bg-journal-bg border border-journal-border rounded-lg focus:outline-none focus:ring-1 focus:ring-journal-accent tabular-nums"
+              />
             </div>
 
-            {/* Mood selector */}
+            {/* Mood selector (using drawn Lucide icons, no emojis!) */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-journal-muted mb-2">
                 Mood (Optional)
               </label>
               <div className="grid grid-cols-2 gap-1.5">
                 {AVAILABLE_MOODS.map((m) => {
+                  const Icon = m.icon;
                   const isSelected = mood === m.value;
                   return (
                     <button
@@ -783,7 +790,7 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                           : "bg-journal-bg text-journal-text border-journal-border hover:bg-journal-tag"
                       }`}
                     >
-                      <span>{m.emoji}</span>
+                      <Icon className="w-3.5 h-3.5 shrink-0" />
                       <span>{m.label}</span>
                     </button>
                   );
@@ -833,14 +840,14 @@ export function EntryEditor({ entry }: EntryEditorProps) {
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
                 placeholder="Brief reflection summary for archives..."
-                className="w-full px-3 py-2 text-sm bg-journal-bg border border-journal-border rounded-lg focus:outline-none focus:ring-1 focus:ring-journal-accent resize-none"
+                className="w-full px-3 py-2 text-sm bg-journal-bg border border-journal-border rounded-lg focus:outline-none focus:ring-1 focus:ring-journal-accent resize-none leading-relaxed"
               />
             </div>
           </div>
 
           {/* Privacy Note */}
-          <div className="p-4 bg-journal-tag/60 border border-journal-border rounded-xl text-xs text-journal-muted space-y-1.5">
-            <div className="flex items-center gap-1.5 font-medium text-journal-text">
+          <div className="p-4 bg-journal-tag border border-journal-border rounded-xl text-xs text-journal-muted space-y-1.5">
+            <div className="flex items-center gap-1.5 font-semibold text-journal-text">
               <Lock className="w-3.5 h-3.5 text-journal-accent" />
               <span>Privacy by Default</span>
             </div>
