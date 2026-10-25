@@ -27,11 +27,11 @@ export function PublicEntryView({ entry }: PublicEntryViewProps) {
       {/* Return Link */}
       <div className="mb-10">
         <Link
-          href="/#letters"
+          href="/entries"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-journal-muted hover:text-journal-text transition-colors group"
         >
           <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
-          <span>Back to Dear Me</span>
+          <span>Back to Letters</span>
         </Link>
       </div>
 

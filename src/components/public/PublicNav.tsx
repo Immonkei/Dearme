@@ -8,11 +8,9 @@ export function PublicNav() {
   const pathname = usePathname();
 
   const links = [
-    { href: "/#headspace", label: "Headspace" },
-    { href: "/#about", label: "Why I Write" },
-    { href: "/#letters", label: "Letters" },
-    { href: "/#thoughts", label: "My Mind" },
-    { href: "/#rules", label: "Rules" },
+    { href: "/", label: "Home" },
+    { href: "/entries", label: "Letters" },
+    { href: "/about", label: "Why I Write" },
   ];
 
   return (
@@ -67,47 +65,26 @@ export function PublicFooter() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4 sm:gap-5">
+        <div className="flex items-center gap-6">
           <Link
-            href="/#headspace"
+            href="/"
             className="hover:text-journal-text transition-colors font-medium"
           >
-            Headspace
+            Home
           </Link>
           <span aria-hidden="true" className="text-journal-muted/40">•</span>
           <Link
-            href="/#about"
-            className="hover:text-journal-text transition-colors font-medium"
-          >
-            Why I Write
-          </Link>
-          <span aria-hidden="true" className="text-journal-muted/40">•</span>
-          <Link
-            href="/#letters"
+            href="/entries"
             className="hover:text-journal-text transition-colors font-medium"
           >
             Letters
           </Link>
           <span aria-hidden="true" className="text-journal-muted/40">•</span>
           <Link
-            href="/#thoughts"
+            href="/about"
             className="hover:text-journal-text transition-colors font-medium"
           >
-            My Mind
-          </Link>
-          <span aria-hidden="true" className="text-journal-muted/40">•</span>
-          <Link
-            href="/#rules"
-            className="hover:text-journal-text transition-colors font-medium"
-          >
-            Rules
-          </Link>
-          <span aria-hidden="true" className="text-journal-muted/40">•</span>
-          <Link
-            href="/#top"
-            className="hover:text-journal-text transition-colors font-medium text-journal-accent"
-          >
-            ↑ Top
+            Why I Write
           </Link>
         </div>
       </div>
