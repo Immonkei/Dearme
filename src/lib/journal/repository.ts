@@ -76,8 +76,8 @@ function initLocalStore(): LocalStore {
       category: "Daily Life",
       tags: ["Morning", "Solitude", "Tea"],
       mood: "peaceful",
-      status: "private",
-      published_at: null,
+      status: "published",
+      published_at: new Date(Date.now() - 86400000).toISOString(),
       excerpt: "Made tea before anyone else woke up. Ten unbroken minutes of sitting with my thoughts and listening to the breeze.",
       content: {
         version: 1,
@@ -102,6 +102,76 @@ function initLocalStore(): LocalStore {
       cover_image_id: null,
       created_at: new Date(Date.now() - 86400000).toISOString(),
       updated_at: new Date(Date.now() - 86400000).toISOString(),
+    },
+    {
+      id: "9fa06543-3456-789a-01cd-ef0123456789",
+      title: "Things I wish I could tell my younger self",
+      slug: "things-i-wish-i-could-tell-my-younger-self",
+      entry_date: new Date(Date.now() - 172800000).toISOString().split("T")[0],
+      category: "Letters",
+      tags: ["SelfCare", "Memories", "Letters"],
+      mood: "grateful",
+      status: "published",
+      published_at: new Date(Date.now() - 172800000).toISOString(),
+      excerpt: "You don't need to perform or pretend to be unbreakable to be worthy of love, and the doors closing on you are just saving you from shrinking.",
+      content: {
+        version: 1,
+        blocks: [
+          {
+            id: "l1",
+            type: "paragraph",
+            text: "If I could sit across from myself at eighteen, I wouldn't talk about achievements or plans. I'd just sit there and tell myself to stop apologizing for feeling things so deeply.",
+          },
+          {
+            id: "l2",
+            type: "blockquote",
+            text: "Not every closed door is a tragedy. Some of them are just saving you from rooms you were never meant to shrink into.",
+          },
+          {
+            id: "l3",
+            type: "paragraph",
+            text: "You're going to lose friendships you thought were permanent, but you will also meet people who see the real you without demanding you change. You are going to stumble through confusing seasons, but you will always find your footing. Don't be afraid of the quiet days.",
+          },
+        ],
+      },
+      cover_image_id: null,
+      created_at: new Date(Date.now() - 172800000).toISOString(),
+      updated_at: new Date(Date.now() - 172800000).toISOString(),
+    },
+    {
+      id: "a0b17654-4567-89ab-12de-f01234567890",
+      title: "Feeling exhausted, taking it one hour at a time",
+      slug: "feeling-exhausted-one-hour-at-a-time",
+      entry_date: new Date(Date.now() - 259200000).toISOString().split("T")[0],
+      category: "Thoughts",
+      tags: ["Burnout", "Night", "Honesty"],
+      mood: "melancholy",
+      status: "published",
+      published_at: new Date(Date.now() - 259200000).toISOString(),
+      excerpt: "Too many demands today. My brain feels like a crowded room. Reminding myself to step back and close the laptop.",
+      content: {
+        version: 1,
+        blocks: [
+          {
+            id: "e1",
+            type: "paragraph",
+            text: "Too many open tabs in my mind today. Everyone wanted an answer right away, and by late afternoon my chest felt tight and hollowed out.",
+          },
+          {
+            id: "e2",
+            type: "paragraph",
+            text: "Instead of staying up trying to force productivity or scroll through other people's lives to numb out, I closed everything. Took a hot shower. Wrote this down so the thoughts stop bouncing around in my head.",
+          },
+          {
+            id: "e3",
+            type: "paragraph",
+            text: "Tomorrow is another day. I am allowed to rest without justifying it.",
+          },
+        ],
+      },
+      cover_image_id: null,
+      created_at: new Date(Date.now() - 259200000).toISOString(),
+      updated_at: new Date(Date.now() - 259200000).toISOString(),
     },
   ];
 

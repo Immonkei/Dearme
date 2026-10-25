@@ -8,9 +8,11 @@ export function PublicNav() {
   const pathname = usePathname();
 
   const links = [
+    { href: "/#headspace", label: "Headspace" },
     { href: "/#about", label: "Why I Write" },
     { href: "/#letters", label: "Letters" },
-    { href: "/#moments", label: "Notes" },
+    { href: "/#thoughts", label: "My Mind" },
+    { href: "/#rules", label: "Rules" },
   ];
 
   return (
@@ -65,28 +67,42 @@ export function PublicFooter() {
           </p>
         </div>
 
-        <div className="flex items-center gap-5 sm:gap-6">
+        <div className="flex flex-wrap items-center gap-4 sm:gap-5">
+          <Link
+            href="/#headspace"
+            className="hover:text-journal-text transition-colors font-medium"
+          >
+            Headspace
+          </Link>
+          <span aria-hidden="true" className="text-journal-muted/40">•</span>
           <Link
             href="/#about"
             className="hover:text-journal-text transition-colors font-medium"
           >
             Why I Write
           </Link>
-          <span aria-hidden="true" className="text-journal-muted/50">•</span>
+          <span aria-hidden="true" className="text-journal-muted/40">•</span>
           <Link
             href="/#letters"
             className="hover:text-journal-text transition-colors font-medium"
           >
             Letters
           </Link>
-          <span aria-hidden="true" className="text-journal-muted/50">•</span>
+          <span aria-hidden="true" className="text-journal-muted/40">•</span>
           <Link
-            href="/#moments"
+            href="/#thoughts"
             className="hover:text-journal-text transition-colors font-medium"
           >
-            Notes
+            My Mind
           </Link>
-          <span aria-hidden="true" className="text-journal-muted/50">•</span>
+          <span aria-hidden="true" className="text-journal-muted/40">•</span>
+          <Link
+            href="/#rules"
+            className="hover:text-journal-text transition-colors font-medium"
+          >
+            Rules
+          </Link>
+          <span aria-hidden="true" className="text-journal-muted/40">•</span>
           <Link
             href="/#top"
             className="hover:text-journal-text transition-colors font-medium text-journal-accent"
