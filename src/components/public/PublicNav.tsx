@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Feather, Lock } from "lucide-react";
+import { Feather } from "lucide-react";
 
 export function PublicNav() {
   const pathname = usePathname();
@@ -73,14 +73,6 @@ export function PublicFooter() {
             className="hover:text-journal-text transition-colors"
           >
             Archive
-          </Link>
-          <span aria-hidden="true">•</span>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-1 text-journal-muted hover:text-journal-text transition-colors"
-          >
-            <Lock className="w-3 h-3 text-journal-accent" />
-            <span>Owner Sign In</span>
           </Link>
         </div>
       </div>
