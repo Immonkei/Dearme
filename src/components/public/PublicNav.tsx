@@ -21,6 +21,9 @@ export function PublicNav() {
           <span className="font-journal-serif text-2xl font-bold tracking-tight text-journal-text group-hover:text-journal-accent transition-colors">
             Dear Me
           </span>
+          <span className="hidden sm:inline-block text-xs font-journal-serif italic text-journal-muted pl-2 border-l border-journal-border">
+            by Nithh
+          </span>
         </Link>
 
         <nav className="flex items-center gap-6 text-sm">
@@ -55,10 +58,10 @@ export function PublicFooter() {
           <p className="font-journal-serif text-base font-semibold text-journal-text flex flex-wrap items-center gap-2">
             <span>Dear Me</span>
             <span className="text-journal-muted/50 font-normal" aria-hidden="true">•</span>
-            <span className="text-journal-muted font-normal italic font-journal-serif">for me, by Nithh</span>
+            <span className="text-journal-muted font-normal italic font-journal-serif">for me, by me</span>
           </p>
           <p className="italic font-journal-serif text-journal-muted mt-1">
-            Letters to the person I am becoming.
+            Written by Nithh. Letters to the person I am becoming.
           </p>
         </div>
 

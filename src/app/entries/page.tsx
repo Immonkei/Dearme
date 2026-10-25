@@ -32,7 +32,7 @@ export default async function PublicArchivePage({ searchParams }: EntriesPagePro
             Letters I&apos;ve Shared
           </h1>
           <p className="text-sm sm:text-base text-journal-muted font-journal-serif italic">
-            A quiet collection of reflections, memories, and lessons I felt ready to leave out in the open.
+            A quiet collection of reflections, memories, and lessons written by Nithh — for me, by me.
           </p>
 
           {/* Category Filter Pills */}

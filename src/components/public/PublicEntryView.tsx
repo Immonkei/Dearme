@@ -125,6 +125,12 @@ export function PublicEntryView({ entry }: PublicEntryViewProps) {
           ))}
         </div>
       )}
+
+      {/* Author Byline */}
+      <div className="mt-12 pt-8 border-t border-journal-border flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-journal-muted font-journal-serif">
+        <span className="font-medium text-journal-text">Written by Nithh</span>
+        <span className="italic">Dear Me • for me, by me</span>
+      </div>
     </article>
   );
 }

@@ -69,6 +69,15 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
+
+          <div className="pt-8 border-t border-journal-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm not-italic font-journal-sans">
+            <span className="italic font-journal-serif text-journal-muted">
+              Dear Me — for me, by me.
+            </span>
+            <span className="font-journal-serif font-semibold text-journal-text text-base">
+              — Nithh
+            </span>
+          </div>
         </div>
       </main>
 

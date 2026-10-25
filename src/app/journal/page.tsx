@@ -31,10 +31,10 @@ export default async function JournalDashboard({ searchParams }: JournalPageProp
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-journal-border">
         <div>
           <h1 className="font-journal-serif text-3xl sm:text-4xl font-bold tracking-tight text-journal-text mb-1.5">
-            My Journal
+            Nithh&apos;s Journal
           </h1>
           <p className="text-sm text-journal-muted italic font-journal-serif">
-            Letters to the person I am becoming.
+            Dear Me — for me, by me.
           </p>
         </div>
 

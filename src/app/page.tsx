@@ -15,6 +15,14 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="max-w-3xl mx-auto px-4 sm:px-6 pt-20 sm:pt-28 pb-16 text-center">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-medium text-journal-accent bg-journal-accent-light mb-6 border border-journal-accent/20">
+          <span>Dear Me</span>
+          <span className="text-journal-muted/40">•</span>
+          <span>for me, by me</span>
+          <span className="text-journal-muted/40">•</span>
+          <span>by Nithh</span>
+        </div>
+
         <h1 className="font-journal-serif text-4xl sm:text-6xl font-bold tracking-tight text-journal-text leading-[1.15] mb-6 text-balance">
           Letters to the person I am becoming.
         </h1>
@@ -24,7 +32,7 @@ export default async function HomePage() {
         </p>
 
         <p className="text-sm sm:text-base text-journal-muted max-w-lg mx-auto leading-relaxed mb-10 font-journal-sans">
-          A personal corner for my thoughts, quiet mornings, and the lessons I am learning as I grow. Most of what I write is private; only these few reflections are shared with the open world.
+          A personal corner by Nithh for honest thoughts, quiet mornings, and the lessons I am learning as I grow. Most of what I write is private; only these few reflections are shared with the open world.
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-3.5">

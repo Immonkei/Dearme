@@ -35,10 +35,10 @@ export default function LoginPage() {
               <Lock className="w-5 h-5" />
             </div>
             <h1 className="font-journal-serif text-3xl font-bold tracking-tight text-journal-text mb-2 text-balance">
-              Private Journal
+              Welcome back, Nithh
             </h1>
-            <p className="text-xs sm:text-sm text-journal-muted leading-relaxed">
-              Sign in to write and reflect in your personal space.
+            <p className="text-xs sm:text-sm text-journal-muted leading-relaxed italic font-journal-serif">
+              Dear Me — for me, by me.
             </p>
           </div>
 
@@ -58,15 +58,15 @@ export default function LoginPage() {
                 htmlFor="email"
                 className="block text-xs font-semibold tracking-wider uppercase text-journal-muted mb-1.5"
               >
-                Email
+                Owner Email
               </label>
               <input
                 id="email"
                 name="email"
                 type="email"
                 required
-                defaultValue="owner@example.com"
-                placeholder="owner@example.com"
+                defaultValue="minphanith11@gmail.com"
+                placeholder="minphanith11@gmail.com"
                 autoComplete="email"
                 className="w-full px-3.5 py-2.5 text-sm bg-journal-bg/50 border border-journal-border rounded-lg focus:outline-none focus:ring-2 focus:ring-journal-accent/30 focus:border-journal-accent transition-colors text-journal-text"
               />
@@ -84,7 +84,7 @@ export default function LoginPage() {
                 name="password"
                 type="password"
                 required
-                defaultValue="devpassword"
+                defaultValue="nithh123"
                 placeholder="••••••••••••"
                 autoComplete="current-password"
                 className="w-full px-3.5 py-2.5 text-sm bg-journal-bg/50 border border-journal-border rounded-lg focus:outline-none focus:ring-2 focus:ring-journal-accent/30 focus:border-journal-accent transition-colors text-journal-text"
@@ -112,7 +112,7 @@ export default function LoginPage() {
 
           <div className="mt-8 pt-6 border-t border-journal-border text-center">
             <p className="text-xs text-journal-muted italic font-journal-serif">
-              Letters to the person I am becoming.
+              Dear Me • for me, by me
             </p>
           </div>
         </div>
